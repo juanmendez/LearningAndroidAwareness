@@ -1,9 +1,12 @@
 package info.juanmendez.myawareness.dependencies;
 
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import org.androidannotations.annotations.EBean;
+
+import info.juanmendez.myawareness.R;
 
 /**
  * Created by Juan Mendez on 9/9/2017.
@@ -19,9 +22,20 @@ public class SnackMePlease {
         this.snackView = snackView;
     }
 
-    public void showMessage( String message ){
+    public void i(String message ){
         if( snackView!=null ){
-            Snackbar.make(snackView, message, Snackbar.LENGTH_LONG ).show();
+            Snackbar snackbar = Snackbar.make(snackView, message, Snackbar.LENGTH_LONG );
+            snackbar.getView().setBackgroundColor(ContextCompat.getColor(snackView.getContext(), android.R.color.black ));
+            snackbar.show();
+        }
+    }
+
+    public void e(String message) {
+        if( snackView!=null ){
+
+            Snackbar snackbar = Snackbar.make(snackView, message, Snackbar.LENGTH_LONG );
+            snackbar.getView().setBackgroundColor(ContextCompat.getColor(snackView.getContext(), R.color.colorAccent ));
+            snackbar.show();
         }
     }
 }

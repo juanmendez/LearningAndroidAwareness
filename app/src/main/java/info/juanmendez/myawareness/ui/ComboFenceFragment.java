@@ -1,7 +1,9 @@
 package info.juanmendez.myawareness.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.view.View;
@@ -10,6 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.awareness.fence.AwarenessFence;
+import com.google.android.gms.awareness.fence.HeadphoneFence;
+import com.google.android.gms.awareness.fence.LocationFence;
+import com.google.android.gms.awareness.state.HeadphoneState;
+
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.CheckedChange;
@@ -17,11 +24,17 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import info.juanmendez.myawareness.FragmentUtils;
 import info.juanmendez.myawareness.R;
 import info.juanmendez.myawareness.dependencies.AwarenessConnection;
 import info.juanmendez.myawareness.dependencies.ComboFence;
+import info.juanmendez.myawareness.dependencies.LocationSnapshotService;
 import info.juanmendez.myawareness.dependencies.SnackMePlease;
+import info.juanmendez.myawareness.events.Response;
+import info.juanmendez.myawareness.events.ShortResponse;
 
 
 /**
@@ -106,10 +119,47 @@ public class ComboFenceFragment extends Fragment {
 
     @CheckedChange(R.id.comboFence_toggleButton)
     void onToggleButton( boolean isChecked ){
-        if( comboFence.validate() ){
+        if( isChecked && comboFence.validate() ){
+            startFence();
 
         }else{
             toggleButton.setChecked(false);
+            snackMePlease.e( comboFence.getErrorMessage() );
+        }
+    }
+
+    private void startFence(){
+        List<AwarenessFence> awarenessFences = new ArrayList<>();
+
+        ShortResponse<AwarenessFence> snapshotResponse = fence -> {
+            awarenessFences.add( fence );
+
+            if( awarenessFences.size() == comboFence.getFencesNeeded() ){
+                snackMePlease.i( "we can start our awarenss app!");
+            }
+        };
+
+
+        if( comboFence.isLocation() ){
+
+            //getSnapshot ensures to have permission granted, so we can suppress it during onResult
+            LocationSnapshotService.build(getActivity(),connection).getSnapshot(new Response<Location>() {
+
+                @SuppressLint("MissingPermission")
+                @Override
+                public void onResult(Location location) {
+                    snapshotResponse.onResult(LocationFence.exiting( location.getLatitude(), location.getLongitude(), comboFence.getMeters()) );
+                }
+
+                @Override
+                public void onError(Exception exception) {
+                    snackMePlease.e( exception.getMessage() );
+                }
+            });
+        }
+
+        if( comboFence.isHeadphones() ){
+            snapshotResponse.onResult(HeadphoneFence.during(HeadphoneState.PLUGGED_IN));
         }
     }
 

@@ -20,7 +20,11 @@ public class LocationSnapshotService {
     RxPermissions rxPermissions;
     AwarenessConnection connection;
 
-    public LocationSnapshotService(Activity activity, AwarenessConnection connection ){
+    public static LocationSnapshotService build( Activity activity, AwarenessConnection connection ){
+        return new LocationSnapshotService( activity, connection );
+    }
+
+    private LocationSnapshotService(Activity activity, AwarenessConnection connection ){
         this.connection = connection;
         rxPermissions  = new RxPermissions(activity);
     }

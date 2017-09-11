@@ -58,18 +58,18 @@ public class LocationSnapshotFragment extends Fragment {
     @Click(R.id.snapshotBtn)
     public void getSnapshot(){
 
-        LocationSnapshotService snapshotService = new LocationSnapshotService(getActivity(), connection );
-        snapshotService.getSnapshot(new Response<Location>() {
-            @Override
-            public void onResult(Location location) {
-                writeMessage( String.format("You are @ (%s,%s)", location.getLatitude(), location.getLongitude() ));
-            }
+        LocationSnapshotService.build(getActivity(), connection )
+            .getSnapshot(new Response<Location>() {
+                @Override
+                public void onResult(Location location) {
+                    writeMessage( String.format("You are @ (%s,%s)", location.getLatitude(), location.getLongitude() ));
+                }
 
-            @Override
-            public void onError(Exception exception) {
-                writeMessage( exception.getMessage() );
-            }
-        });
+                @Override
+                public void onError(Exception exception) {
+                    writeMessage( exception.getMessage() );
+                }
+            });
     }
 
     private void lastMessage(){

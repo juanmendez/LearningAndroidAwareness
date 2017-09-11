@@ -1,6 +1,5 @@
 package info.juanmendez.myawareness.dependencies;
 
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 /**
@@ -10,12 +9,11 @@ import org.androidannotations.annotations.EBean;
  */
 @EBean(scope= EBean.Scope.Singleton)
 public class ComboFence {
-    @Bean
-    SnackMePlease snackMePlease;
     
     private boolean location;
     private boolean headphones;
     private int meters;
+    private String errorMessage="";
 
     public boolean isLocation() {
         return location;
@@ -41,23 +39,31 @@ public class ComboFence {
         this.meters = meters;
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
     /**
      * test if we can start the fence or not
-     * for simplicity we are already showing error message with snackMePlease
      * @return true if valid, else not valid
      */
     public boolean validate(){
+        errorMessage = "";
         if( isHeadphones() || isLocation() ){
 
             if( isLocation() && getMeters() == 0 ){
-                snackMePlease.showMessage( "Please enter distance!");
+                errorMessage = "Please enter distance!";
                 return false;
             }
 
             return true;
         }else{
-            snackMePlease.showMessage( "Please select at least one fence!");
+            errorMessage = "Please select at least one fence!";
             return false;
         }
+    }
+
+    public int getFencesNeeded() {
+        return (location?1:0)+(headphones?1:0);
     }
 }

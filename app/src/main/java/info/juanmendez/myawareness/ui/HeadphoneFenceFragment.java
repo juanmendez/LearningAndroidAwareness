@@ -101,7 +101,7 @@ public class HeadphoneFenceFragment extends Fragment{
         headphoneFenceTextMessage.setText( mMessage=message );
     }
 
-    @Receiver(actions = "FENCE_RECEIVER_ACTION")
+    @Receiver(actions = FENCE_INTENT_FILTER )
     public void onBroadcastReceiver(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
         if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {

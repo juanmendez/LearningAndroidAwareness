@@ -6,13 +6,20 @@
 
 
     <CheckBox
-        android:text="Apply Location"
+        android:text="Apply distance fence"
         android:id="@+id/comboFence_checkLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <EditText
+        android:id="@+id/comboFence_meterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Radius in meters for fence"
+        android:inputType="number" android:maxLength="2"/>
+
     <CheckBox
-        android:text="Apply Headphones"
+        android:text="Apply Headphones-on fence"
         android:id="@+id/comboFence_checkHeadphones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -23,6 +30,7 @@
         android:text="Turn fence on|off" />
 
     <ToggleButton
+        android:id="@+id/comboFence_toggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Turn fence on|off" />

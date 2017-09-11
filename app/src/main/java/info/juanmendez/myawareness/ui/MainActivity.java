@@ -24,27 +24,27 @@ public class MainActivity extends AppCompatActivity {
     SnackMePlease snackMePlease;
 
     @AfterViews
-    public void afterViews(){
+    void afterViews(){
         snackMePlease.setSnackView( findViewById(R.id.main_coordinatorLayout) );
     }
 
     @Click
-    public void mainShowHeadphoneSnapshot(){
+    void mainShowHeadphoneSnapshot(){
         showFragment( HeadphoneSnapshotFragment_.builder().build() );
     }
 
     @Click
-    public void mainShowHeadphoneFence(){
+    void mainShowHeadphoneFence(){
         showFragment( HeadphoneFenceFragment_.builder().build() );
     }
 
     @Click
-    public void mainShowLocationSnapshot(){
+    void mainShowLocationSnapshot(){
         showFragment( LocationSnapshotFragment_.builder().build() );
     }
 
     @Click
-    public void mainComboFence(){
+    void mainComboFence(){
         showFragment( ComboFenceFragment_.builder().build() );
     }
 

@@ -1,13 +1,8 @@
 package info.juanmendez.myawareness.ui;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.widget.TextView;
-
-import com.google.android.gms.awareness.Awareness;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -18,7 +13,9 @@ import org.androidannotations.annotations.ViewById;
 import info.juanmendez.myawareness.FragmentUtils;
 import info.juanmendez.myawareness.R;
 import info.juanmendez.myawareness.dependencies.AwarenessConnection;
+import info.juanmendez.myawareness.dependencies.LocationSnapshotService;
 import info.juanmendez.myawareness.dependencies.SnackMePlease;
+import info.juanmendez.myawareness.events.Response;
 
 
 /**
@@ -40,13 +37,11 @@ public class LocationSnapshotFragment extends Fragment {
 
     @Bean
     SnackMePlease snackMePlease;
-    RxPermissions rxPermissions;
 
     @Override
     public void onResume() {
         super.onResume();
 
-        rxPermissions  = new RxPermissions(getActivity());
         lastMessage();
         FragmentUtils.setHomeEnabled( this, true );
         connection.connect();
@@ -63,25 +58,17 @@ public class LocationSnapshotFragment extends Fragment {
     @Click(R.id.snapshotBtn)
     public void getSnapshot(){
 
-        rxPermissions
-                .request(Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(granted -> {
-                    if (granted) {
-                        getLocationSnapshot();
-                    } else {
-                        snackMePlease.showMessage( "ACCESS_FINE_LOCATION was denied");
-                    }
-                });
-    }
+        LocationSnapshotService snapshotService = new LocationSnapshotService(getActivity(), connection );
+        snapshotService.getSnapshot(new Response<Location>() {
+            @Override
+            public void onResult(Location location) {
+                writeMessage( String.format("You are @ (%s,%s)", location.getLatitude(), location.getLongitude() ));
+            }
 
-    @SuppressLint("MissingPermission") //RxPermissions takes care
-    private void getLocationSnapshot(){
-        Awareness.SnapshotApi.getLocation( connection.getClient() ).setResultCallback(locationStateResult -> {
-            if( !locationStateResult.getStatus().isSuccess() )
-                return;
-
-            Location location = locationStateResult.getLocation();
-            writeMessage( String.format("You are @ (%s,%s)", location.getLatitude(), location.getLongitude() ));
+            @Override
+            public void onError(Exception exception) {
+                writeMessage( exception.getMessage() );
+            }
         });
     }
 

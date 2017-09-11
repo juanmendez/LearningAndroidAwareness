@@ -1,0 +1,57 @@
+apply plugin: "com.android.application"
+def supportLibVersion = "25.3.1"
+def playServicesVersion = "9.4.0"
+def aaVersion = "4.3.1"
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "info.juanmendez.myawareness"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        Properties props = new Properties()
+        props.load(new FileInputStream("$project.rootDir/app/awareness.properties"))
+        props.each { prop ->
+            resValue "string", prop.key, prop.value
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    implementation "com.jakewharton.timber:timber:4.5.1"
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:design:${supportLibVersion}"
+    implementation "com.android.support.constraint:constraint-layout:1.0.2"
+    implementation "com.google.android.gms:play-services-contextmanager:${playServicesVersion}"
+
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+    implementation "io.reactivex.rxjava2:rxjava:2.1.3"
+    implementation "com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar"
+    implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
+
+    annotationProcessor "org.androidannotations:androidannotations:${aaVersion}"
+    implementation "org.androidannotations:androidannotations-api:${aaVersion}"
+
+
+    testImplementation "junit:junit:4.12"
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:2.2.2", {
+        exclude group: "com.android.support", module: "support-annotations"
+    })
+}

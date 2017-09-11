@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@android:color/white"
+    android:clickable="true">
+
+
+    <CheckBox
+        android:text="Apply Location"
+        android:id="@+id/comboFence_checkLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Text
+
+    <CheckBox
+        android:text="Apply Headphones"
+        android:id="@+id/comboFence_checkHeadphones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Turn fence on|off" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Turn fence on|off" />
+
+    <TextView
+        android:id="@+id/comboFence_messageText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:textSize="20sp" />
+</LinearLayout>

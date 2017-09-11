@@ -11,8 +11,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Text
-
     <CheckBox
         android:text="Apply Headphones"
         android:id="@+id/comboFence_checkHeadphones"

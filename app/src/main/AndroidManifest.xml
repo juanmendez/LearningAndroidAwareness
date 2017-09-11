@@ -3,6 +3,7 @@
     package="info.juanmendez.myawareness">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name=".AwarenessApp_"
         android:allowBackup="true"
@@ -22,12 +23,6 @@
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
             android:value="@string/AWARENESS_API" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/GEO_API" />
-        <meta-data
-            android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="@string/NEAR_API" />
 
         <receiver android:name=".OutAndAboutReceiver_" />
     </application>

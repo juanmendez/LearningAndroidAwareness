@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
+import com.google.android.gms.awareness.fence.FenceQueryRequest;
 import com.google.android.gms.awareness.fence.FenceState;
+import com.google.android.gms.awareness.fence.FenceStateMap;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.state.HeadphoneState;
@@ -20,10 +22,12 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.Date;
+
 import info.juanmendez.myawareness.FragmentUtils;
 import info.juanmendez.myawareness.R;
 import info.juanmendez.myawareness.dependencies.AwarenessConnection;
-import timber.log.Timber;
+import info.juanmendez.myawareness.dependencies.SnackMePlease;
 
 /**
  * Created by Juan Mendez on 9/9/2017.
@@ -35,6 +39,9 @@ public class HeadphoneFenceFragment extends Fragment{
 
     @Bean
     AwarenessConnection connection;
+
+    @Bean
+    SnackMePlease snackMePlease;
 
     @ViewById
     TextView headphoneFenceTextMessage;
@@ -78,11 +85,31 @@ public class HeadphoneFenceFragment extends Fragment{
                 .addFence(FENCE_KEY, fencePluggedIn, fenceIntent)
                 .build()).setResultCallback(status -> {
             if (status.isSuccess()) {
-                Timber.i("Fence for headphones in registered");
+                snackMePlease.i("Fence for headphones in registered");
             } else {
-                Timber.i("Fence for headphones in NOT registered");
+                snackMePlease.i("Fence for headphones in NOT registered");
             }
         });
+
+        Awareness.FenceApi.queryFences(connection.getClient(),
+                FenceQueryRequest.forFences(FENCE_KEY))
+                .setResultCallback(fenceQueryResult -> {
+                    if (!fenceQueryResult.getStatus().isSuccess()) {
+                        writeMessage("Could not query fences: ");
+                        return;
+                    }
+                    FenceStateMap map = fenceQueryResult.getFenceStateMap();
+                    for (String fenceKey : map.getFenceKeys()) {
+                        FenceState fenceState = map.getFenceState(fenceKey);
+                        writeMessage("Fence " + fenceKey + ": "
+                                + fenceState.getCurrentState()
+                                + ", was="
+                                + fenceState.getPreviousState()
+                                + ", lastUpdateTime="
+                                + new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy").format(
+                                new Date(fenceState.getLastFenceUpdateTimeMillis())));
+                    }
+                });
     }
 
     private void turnOffFence() {
@@ -106,6 +133,7 @@ public class HeadphoneFenceFragment extends Fragment{
         FenceState fenceState = FenceState.extract(intent);
         if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
 
+            snackMePlease.i( "Receiver has being pinge");
             switch (fenceState.getCurrentState()) {
                 case FenceState.TRUE:
                     writeMessage( "Headphones are plugged");

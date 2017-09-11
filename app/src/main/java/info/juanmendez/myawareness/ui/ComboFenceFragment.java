@@ -1,18 +1,23 @@
 package info.juanmendez.myawareness.ui;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
+import com.google.android.gms.awareness.fence.FenceState;
+import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.fence.LocationFence;
 import com.google.android.gms.awareness.state.HeadphoneState;
@@ -35,6 +40,7 @@ import info.juanmendez.myawareness.dependencies.LocationSnapshotService;
 import info.juanmendez.myawareness.dependencies.SnackMePlease;
 import info.juanmendez.myawareness.events.Response;
 import info.juanmendez.myawareness.events.ShortResponse;
+import timber.log.Timber;
 
 
 /**
@@ -69,7 +75,7 @@ public class ComboFenceFragment extends Fragment {
     ToggleButton toggleButton;
 
     private static final String FENCE_INTENT_FILTER = "COMBO_RECEIVER_ACTION";
-    private static final String FENCE_KEY = "MyHeadphonesOnWalkingKey";
+    private static final String FENCE_KEY = "MyComboFenceKey";
 
     @Override
     public void onResume(){
@@ -120,7 +126,7 @@ public class ComboFenceFragment extends Fragment {
     @CheckedChange(R.id.comboFence_toggleButton)
     void onToggleButton( boolean isChecked ){
         if( isChecked && comboFence.validate() ){
-            startFence();
+            turnOnFence();
 
         }else{
             toggleButton.setChecked(false);
@@ -128,17 +134,33 @@ public class ComboFenceFragment extends Fragment {
         }
     }
 
-    private void startFence(){
-        List<AwarenessFence> awarenessFences = new ArrayList<>();
+    private void turnOnFence(){
+        List<AwarenessFence> fences = new ArrayList<>();
 
         ShortResponse<AwarenessFence> snapshotResponse = fence -> {
-            awarenessFences.add( fence );
+            fences.add( fence );
 
-            if( awarenessFences.size() == comboFence.getFencesNeeded() ){
-                snackMePlease.i( "we can start our awarenss app!");
+            if( fences.size() == comboFence.getFencesNeeded() ){
+                AwarenessFence awarenessFence;
+
+                if( fences.size() == 1 )
+                    awarenessFence = fences.get(0);
+                else
+                    awarenessFence = AwarenessFence.and( fences );
+
+                PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(FENCE_INTENT_FILTER), 0);
+
+                Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
+                        .addFence(FENCE_KEY, awarenessFence, fenceIntent)
+                        .build()).setResultCallback(status -> {
+                    if (status.isSuccess()) {
+                        Timber.i("Fence for headphones in registered");
+                    } else {
+                        Timber.i("Fence for headphones in NOT registered");
+                    }
+                });
             }
         };
-
 
         if( comboFence.isLocation() ){
 
@@ -148,7 +170,7 @@ public class ComboFenceFragment extends Fragment {
                 @SuppressLint("MissingPermission")
                 @Override
                 public void onResult(Location location) {
-                    snapshotResponse.onResult(LocationFence.exiting( location.getLatitude(), location.getLongitude(), comboFence.getMeters()) );
+                    snapshotResponse.onResult( AwarenessFence.not(LocationFence.in( location.getLatitude(), location.getLongitude(), comboFence.getMeters(), comboFence.getMeters() )) );
                 }
 
                 @Override
@@ -172,6 +194,21 @@ public class ComboFenceFragment extends Fragment {
 
     @Receiver(actions = FENCE_INTENT_FILTER )
     public void onBroadcastReceiver(Context context, Intent intent) {
+        FenceState fenceState = FenceState.extract(intent);
+        if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
 
+            switch (fenceState.getCurrentState()) {
+                case FenceState.TRUE:
+                    snackMePlease.e( "TRUE!");
+                    break;
+                case FenceState.FALSE:
+                    snackMePlease.e( "FALSE!");
+                    break;
+                default:
+                case FenceState.UNKNOWN:
+                    snackMePlease.i( "UNKNOWN!");
+                    break;
+            }
+        }
     }
 }

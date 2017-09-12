@@ -126,7 +126,7 @@ public class HeadphoneFenceFragment extends Fragment{
     }
 
     /*
-    FIXED: Receiver Issue.
+    FIXED: Receiver Issue, I simply commented this out. 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -3,15 +3,15 @@ package info.juanmendez.myawareness.ui;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
-import com.google.android.gms.awareness.fence.FenceQueryRequest;
 import com.google.android.gms.awareness.fence.FenceState;
-import com.google.android.gms.awareness.fence.FenceStateMap;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.state.HeadphoneState;
@@ -21,8 +21,6 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
-
-import java.util.Date;
 
 import info.juanmendez.myawareness.FragmentUtils;
 import info.juanmendez.myawareness.R;
@@ -51,6 +49,12 @@ public class HeadphoneFenceFragment extends Fragment{
 
     private static final String FENCE_INTENT_FILTER = "FENCE_RECEIVER_ACTION";
     private static final String FENCE_KEY = "MyHeadphoneFenceKey";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public void onResume(){
@@ -90,26 +94,6 @@ public class HeadphoneFenceFragment extends Fragment{
                 snackMePlease.i("Fence for headphones in NOT registered");
             }
         });
-
-        Awareness.FenceApi.queryFences(connection.getClient(),
-                FenceQueryRequest.forFences(FENCE_KEY))
-                .setResultCallback(fenceQueryResult -> {
-                    if (!fenceQueryResult.getStatus().isSuccess()) {
-                        writeMessage("Could not query fences: ");
-                        return;
-                    }
-                    FenceStateMap map = fenceQueryResult.getFenceStateMap();
-                    for (String fenceKey : map.getFenceKeys()) {
-                        FenceState fenceState = map.getFenceState(fenceKey);
-                        writeMessage("Fence " + fenceKey + ": "
-                                + fenceState.getCurrentState()
-                                + ", was="
-                                + fenceState.getPreviousState()
-                                + ", lastUpdateTime="
-                                + new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy").format(
-                                new Date(fenceState.getLastFenceUpdateTimeMillis())));
-                    }
-                });
     }
 
     private void turnOffFence() {

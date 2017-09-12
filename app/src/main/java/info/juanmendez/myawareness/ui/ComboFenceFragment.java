@@ -88,6 +88,7 @@ public class ComboFenceFragment extends Fragment {
 
         meterText.setText( String.valueOf(comboFence.getMeters()) );
         showMeterText( comboFence.isLocation() );
+        turnOnFence();
     }
 
     @CheckedChange(R.id.comboFence_checkLocation)
@@ -126,15 +127,16 @@ public class ComboFenceFragment extends Fragment {
     @CheckedChange(R.id.comboFence_toggleButton)
     void onToggleButton( boolean isChecked ){
         if( isChecked && comboFence.validate() ){
-            turnOnFence();
+            buildUpFences();
 
         }else{
+            comboFence.setFence(null);
             toggleButton.setChecked(false);
             snackMePlease.e( comboFence.getErrorMessage() );
         }
     }
 
-    private void turnOnFence(){
+    private void buildUpFences(){
         List<AwarenessFence> fences = new ArrayList<>();
 
         ShortResponse<AwarenessFence> snapshotResponse = fence -> {
@@ -148,22 +150,13 @@ public class ComboFenceFragment extends Fragment {
                 else
                     awarenessFence = AwarenessFence.and( fences );
 
-                PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(FENCE_INTENT_FILTER), 0);
+                comboFence.setFence( awarenessFence );
 
-                Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
-                        .addFence(FENCE_KEY, awarenessFence, fenceIntent)
-                        .build()).setResultCallback(status -> {
-                    if (status.isSuccess()) {
-                        Timber.i("Fence for headphones in registered");
-                    } else {
-                        Timber.i("Fence for headphones in NOT registered");
-                    }
-                });
+                turnOnFence();
             }
         };
 
         if( comboFence.isLocation() ){
-
             //getSnapshot ensures to have permission granted, so we can suppress it during onResult
             LocationSnapshotService.build(getActivity(),connection).getSnapshot(new Response<Location>() {
 
@@ -182,6 +175,24 @@ public class ComboFenceFragment extends Fragment {
 
         if( comboFence.isHeadphones() ){
             snapshotResponse.onResult(HeadphoneFence.during(HeadphoneState.PLUGGED_IN));
+        }
+    }
+
+    //runs fence only if it is available.
+    private void turnOnFence() {
+
+        if( comboFence.getFence() != null ){
+            PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(FENCE_INTENT_FILTER), 0);
+
+            Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
+                    .addFence(FENCE_KEY, comboFence.getFence(), fenceIntent)
+                    .build()).setResultCallback(status -> {
+                if (status.isSuccess()) {
+                    Timber.i("Fence for headphones in registered");
+                } else {
+                    Timber.i("Fence for headphones in NOT registered");
+                }
+            });
         }
     }
 

@@ -23,7 +23,7 @@ public class SnackMePlease {
     }
 
     public void i(String message ){
-        if( snackView!=null ){
+        if( snackView!=null && !message.isEmpty() ){
             Snackbar snackbar = Snackbar.make(snackView, message, Snackbar.LENGTH_LONG );
             snackbar.getView().setBackgroundColor(ContextCompat.getColor(snackView.getContext(), android.R.color.black ));
             snackbar.show();
@@ -31,8 +31,7 @@ public class SnackMePlease {
     }
 
     public void e(String message) {
-        if( snackView!=null ){
-
+        if( snackView!=null && !message.isEmpty() ){
             Snackbar snackbar = Snackbar.make(snackView, message, Snackbar.LENGTH_LONG );
             snackbar.getView().setBackgroundColor(ContextCompat.getColor(snackView.getContext(), R.color.colorAccent ));
             snackbar.show();

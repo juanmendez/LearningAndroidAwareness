@@ -1,5 +1,7 @@
 package info.juanmendez.myawareness.dependencies;
 
+import com.google.android.gms.awareness.fence.AwarenessFence;
+
 import org.androidannotations.annotations.EBean;
 
 /**
@@ -7,12 +9,13 @@ import org.androidannotations.annotations.EBean;
  * www.juanmendez.info
  * contact@juanmendez.info
  */
-@EBean(scope= EBean.Scope.Singleton)
+@EBean
 public class ComboFence {
     
     private boolean location;
     private boolean headphones;
     private int meters;
+    private AwarenessFence fence;
     private String errorMessage="";
 
     public boolean isLocation() {
@@ -37,6 +40,14 @@ public class ComboFence {
 
     public void setMeters(int meters) {
         this.meters = meters;
+    }
+
+    public AwarenessFence getFence() {
+        return fence;
+    }
+
+    public void setFence(AwarenessFence fence) {
+        this.fence = fence;
     }
 
     public String getErrorMessage() {

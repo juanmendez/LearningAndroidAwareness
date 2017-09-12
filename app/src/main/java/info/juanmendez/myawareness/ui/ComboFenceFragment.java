@@ -74,8 +74,8 @@ public class ComboFenceFragment extends Fragment {
     @ViewById(R.id.comboFence_toggleButton)
     ToggleButton toggleButton;
 
-    private static final String FENCE_INTENT_FILTER = "COMBO_RECEIVER_ACTION";
-    private static final String FENCE_KEY = "MyComboFenceKey";
+    public static final String FENCE_INTENT_FILTER = "COMBO_RECEIVER_ACTION";
+    public static final String FENCE_KEY = "MyComboFenceKey";
 
     @Override
     public void onResume(){
@@ -204,7 +204,7 @@ public class ComboFenceFragment extends Fragment {
     }
 
     @Receiver(actions = FENCE_INTENT_FILTER )
-    public void onBroadcastReceiver(Context context, Intent intent) {
+    public void onComboReceiver(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
         if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
 

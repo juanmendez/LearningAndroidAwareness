@@ -3,8 +3,6 @@ package info.juanmendez.myawareness.ui;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.TextView;
@@ -47,30 +45,24 @@ public class HeadphoneFenceFragment extends Fragment{
     @InstanceState
     String mMessage;
 
-    private static final String FENCE_INTENT_FILTER = "FENCE_RECEIVER_ACTION";
-    private static final String FENCE_KEY = "MyHeadphoneFenceKey";
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
+    public static final String FENCE_INTENT_FILTER = "FENCE_HEADPHONE_ACTION";
+    public static final String FENCE_KEY = "MyHeadphoneFenceKey";
 
     @Override
     public void onResume(){
         super.onResume();
-        FragmentUtils.setHomeEnabled( this, true );
 
         lastMessage();
         connection.connect();
         turnOnFence();
+        FragmentUtils.setHomeEnabled( this, true );
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        FragmentUtils.setHomeEnabled( this, false );
         turnOffFence();
+        FragmentUtils.setHomeEnabled( this, false );
     }
 
     /**
@@ -113,7 +105,7 @@ public class HeadphoneFenceFragment extends Fragment{
     }
 
     @Receiver(actions = FENCE_INTENT_FILTER )
-    public void onBroadcastReceiver(Context context, Intent intent) {
+    public void onHeadphonesReceiver(Context context, Intent intent) {
         FenceState fenceState = FenceState.extract(intent);
         if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
 
@@ -132,4 +124,12 @@ public class HeadphoneFenceFragment extends Fragment{
             }
         }
     }
+
+    /*
+    FIXED: Receiver Issue.
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }*/
 }

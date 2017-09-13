@@ -17,14 +17,16 @@ public class ComboFence {
     private int meters;
     private AwarenessFence fence;
     private String errorMessage="";
-    private Boolean completed = false;
+    private Boolean running = false;
+    private Boolean xfer = false;
 
-    public Boolean getCompleted() {
-        return completed;
+    //<editor-fold desc="Getter-Setter">
+    public Boolean getRunning() {
+        return running;
     }
 
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
+    public void setRunning(Boolean running) {
+        this.running = running;
     }
 
     public boolean isLocation() {
@@ -62,6 +64,16 @@ public class ComboFence {
     public String getErrorMessage() {
         return errorMessage;
     }
+
+    public Boolean getXfer() {
+        return xfer;
+    }
+
+    public void setXfer(Boolean xfer) {
+        this.xfer = xfer;
+    }
+
+    //</editor-fold>
 
     /**
      * test if we can start the fence or not

@@ -32,7 +32,6 @@ import info.juanmendez.myawareness.dependencies.SnackMePlease;
  */
 @EFragment(R.layout.fragment_headphone_fence)
 public class HeadphoneFenceFragment extends Fragment{
-
     @Bean
     AwarenessConnection connection;
 
@@ -70,7 +69,7 @@ public class HeadphoneFenceFragment extends Fragment{
      * Therefore we create a dynamic receiver in which we include a pending intent
      * which Awareness will later use to ping our receiver. Our receiver is also filtering
      * based on what's on the pendingIntent. Because there can be more than one fence with the same
-     * parameters, we pass a key to identify our fence and that's going to be detected in the new receiver
+     * parameters, we pass a NOTIFICATION_KEY to identify our fence and that's going to be detected in the new receiver
      */
     private void turnOnFence() {
 

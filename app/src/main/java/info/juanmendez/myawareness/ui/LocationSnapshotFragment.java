@@ -25,7 +25,6 @@ import info.juanmendez.myawareness.events.Response;
  */
 @EFragment(R.layout.fragment_snapshot)
 public class LocationSnapshotFragment extends Fragment {
-
     @Bean
     AwarenessConnection connection;
 

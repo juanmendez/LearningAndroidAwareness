@@ -12,36 +12,38 @@ import info.juanmendez.myawareness.dependencies.ComboFence;
  */
 public class ComboFenceUtils {
 
+    public static final String PREF_NAME = "Combo-Fence-Preferences";
     private static final String isLOCATION = "location";
     private static final String isHEADPHONES = "headphones";
     private static final String METERS = "meters";
-    private static final String COMPLETED = "completed";
+    private static final String RUNNING = "running";
 
     /**
      * This method fills in data from preference into a ComboFence object.
      * We make use of this so we have less to write on our components
-     * @param comboFence
-     * @param preference
+     * @param comboFence object being updated
+     * @param preference default preferences to pull data from
      */
     public static void toComboFence( ComboFence comboFence, SharedPreferences preference ){
 
         comboFence.setHeadphones( preference.getBoolean(isHEADPHONES, false));
         comboFence.setLocation( preference.getBoolean(isLOCATION, false));
         comboFence.setMeters( preference.getInt(METERS, 0));
-        comboFence.setCompleted( preference.getBoolean(COMPLETED, false));
+        comboFence.setRunning( preference.getBoolean(RUNNING, false));
+        comboFence.setXfer(true);
     }
 
     /**
      * This method copes data from ComboFence object into preferences.
-     * @param preference
-     * @param comboFence
+     * @param preference object being updated
+     * @param comboFence object copied from
      */
     public static void toPreferences(SharedPreferences preference, ComboFence comboFence){
         SharedPreferences.Editor edit = preference.edit();
         edit.putBoolean( isHEADPHONES, comboFence.isHeadphones() );
         edit.putBoolean( isLOCATION, comboFence.isLocation() );
         edit.putInt( METERS, comboFence.getMeters() );
-        edit.putBoolean( COMPLETED, comboFence.getCompleted() );
-        edit.commit();
+        edit.putBoolean(RUNNING, comboFence.getRunning() );
+        edit.apply();
     }
 }

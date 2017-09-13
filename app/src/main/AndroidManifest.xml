@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="info.juanmendez.myawareness">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".AwarenessApp_"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity_">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.MainActivity_" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +26,12 @@
             android:name="com.google.android.awareness.API_KEY"
             android:value="@string/AWARENESS_API" />
 
-        <receiver android:name=".OutAndAboutReceiver_" />
+        <receiver android:name=".OutAndAboutReceiver_">
+            <intent-filter>
+                <action android:name="info.juanmendez.myawareness.BACK_COMBO_RECEIVER_ACTION"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -1,13 +1,13 @@
 package info.juanmendez.myawareness.ui;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -16,7 +16,6 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
-import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.fence.LocationFence;
@@ -26,13 +25,14 @@ import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.Receiver;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import info.juanmendez.myawareness.FragmentUtils;
+import info.juanmendez.myawareness.OutAndAboutReceiver;
 import info.juanmendez.myawareness.R;
 import info.juanmendez.myawareness.dependencies.AwarenessConnection;
 import info.juanmendez.myawareness.dependencies.ComboFence;
@@ -40,6 +40,7 @@ import info.juanmendez.myawareness.dependencies.LocationSnapshotService;
 import info.juanmendez.myawareness.dependencies.SnackMePlease;
 import info.juanmendez.myawareness.events.Response;
 import info.juanmendez.myawareness.events.ShortResponse;
+import info.juanmendez.myawareness.utils.ComboFenceUtils;
 import timber.log.Timber;
 
 
@@ -49,14 +50,7 @@ import timber.log.Timber;
  * contact@juanmendez.info
  */
 @EFragment(R.layout.fragment_combo_fence)
-public class ComboFenceFragment extends Fragment {
-
-    public static final String FENCE_INTENT_FILTER = "COMBO_RECEIVER_ACTION";
-    public static final String FENCE_KEY = "MyComboFenceKey";
-
-    @Bean
-    AwarenessConnection connection;
-
+public class BackComboFenceFragment extends Fragment {
     @ViewById(R.id.comboFence_checkHeadphones)
     CheckBox checkboxHeadphones;
 
@@ -71,6 +65,12 @@ public class ComboFenceFragment extends Fragment {
 
     @ViewById(R.id.comboFence_toggleButton)
     ToggleButton toggleButton;
+
+    @SystemService
+    NotificationManager notificationManager;
+
+    @Bean
+    AwarenessConnection connection;
 
     @Bean
     ComboFence comboFence;
@@ -92,11 +92,13 @@ public class ComboFenceFragment extends Fragment {
         void onCheckedLocation( boolean isChecked ){
             comboFence.setLocation( isChecked );
             showMeterText( isChecked );
+            onToggleButton(false);
         }
 
         @CheckedChange(R.id.comboFence_checkHeadphones)
         void onCheckedHeadphones( boolean isChecked ){
             comboFence.setHeadphones( isChecked );
+            onToggleButton(false);
         }
 
         @AfterTextChange(R.id.comboFence_meterText)
@@ -108,29 +110,31 @@ public class ComboFenceFragment extends Fragment {
                 strMeters = "0";
 
             comboFence.setMeters( Integer.parseInt(strMeters) );
+            onToggleButton(false);
         }
 
         @CheckedChange(R.id.comboFence_toggleButton)
         void onToggleButton( boolean isChecked ){
             if( isChecked && comboFence.validate() ){
                 buildUpFences();
-
             }else{
-                comboFence.setFence(null);
                 toggleButton.setChecked(false);
+                turnOffFence();
                 snackMePlease.e( comboFence.getErrorMessage() );
             }
         }
     //</editor-fold>
 
     void updateView(){
+
+        syncFromPreferences();
         checkboxLocation.setChecked( comboFence.isLocation());
         checkboxHeadphones.setChecked( comboFence.isHeadphones());
 
         meterText.setText( String.valueOf(comboFence.getMeters()) );
         showMeterText( comboFence.isLocation() );
+        toggleButton.setChecked( comboFence.getRunning());
     }
-
 
     void showMeterText(Boolean show ){
 
@@ -142,7 +146,6 @@ public class ComboFenceFragment extends Fragment {
 
         meterText.setVisibility( show? View.VISIBLE:View.GONE );
     }
-
 
     private void buildUpFences(){
         List<AwarenessFence> fences = new ArrayList<>();
@@ -159,7 +162,6 @@ public class ComboFenceFragment extends Fragment {
                     awarenessFence = AwarenessFence.and( fences );
 
                 comboFence.setFence( awarenessFence );
-
                 turnOnFence();
             }
         };
@@ -189,11 +191,13 @@ public class ComboFenceFragment extends Fragment {
     //runs fence only if it is available.
     private void turnOnFence() {
 
-        if( comboFence.getFence() != null ){
-            PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(FENCE_INTENT_FILTER), 0);
+        if( comboFence.getFence() != null && !comboFence.getRunning() ){
+            comboFence.setRunning(true);
+            saveChangesToPreferences();
+            PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(OutAndAboutReceiver.FENCE_INTENT_FILTER), 0);
 
             Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
-                    .addFence(FENCE_KEY, comboFence.getFence(), fenceIntent)
+                    .addFence(OutAndAboutReceiver.FENCE_KEY, comboFence.getFence(), fenceIntent)
                     .build()).setResultCallback(status -> {
                 if (status.isSuccess()) {
                     Timber.i("Fence for headphones in registered");
@@ -204,30 +208,45 @@ public class ComboFenceFragment extends Fragment {
         }
     }
 
+    private void turnOffFence(){
+
+        if( comboFence.getRunning() ){
+            comboFence.setFence(null);
+            comboFence.setRunning(false);
+            saveChangesToPreferences();
+
+            //clear any notifications
+            notificationManager.cancel( OutAndAboutReceiver.NOTIFICATION_KEY);
+
+            Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
+                    .removeFence(OutAndAboutReceiver.FENCE_KEY).build())
+                    .setResultCallback(status -> {
+                        if( status.isSuccess() ){
+                            snackMePlease.i( "our fence successfully disconnected");
+                        }else{
+                            snackMePlease.e( "there was a problem disconnecting " + status.getStatusMessage() );
+                        }
+                    });
+        }
+
+    }
+
+    //<editor-fold desc="Preferences">
+    private void saveChangesToPreferences(){
+        ComboFenceUtils.toPreferences( PreferenceManager.getDefaultSharedPreferences(getContext()), comboFence );
+    }
+
+    private void syncFromPreferences() {
+        if( !comboFence.getXfer() ){
+            ComboFenceUtils.toComboFence( comboFence, PreferenceManager.getDefaultSharedPreferences(getContext()));
+        }
+    }
+    //</editor-fold>
+
     @Override
     public void onPause(){
         super.onPause();
         FragmentUtils.setHomeEnabled( this, false );
         connection.disconnect();
-    }
-
-    @Receiver(actions = FENCE_INTENT_FILTER )
-    public void onComboReceiver(Context context, Intent intent) {
-        FenceState fenceState = FenceState.extract(intent);
-        if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
-
-            switch (fenceState.getCurrentState()) {
-                case FenceState.TRUE:
-                    snackMePlease.e( "TRUE!");
-                    break;
-                case FenceState.FALSE:
-                    snackMePlease.e( "FALSE!");
-                    break;
-                default:
-                case FenceState.UNKNOWN:
-                    snackMePlease.i( "UNKNOWN!");
-                    break;
-            }
-        }
     }
 }

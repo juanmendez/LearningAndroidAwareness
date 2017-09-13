@@ -173,6 +173,8 @@ public class BackComboFenceFragment extends Fragment {
                 @SuppressLint("MissingPermission")
                 @Override
                 public void onResult(Location location) {
+                    comboFence.setLat( location.getLatitude() );
+                    comboFence.setLon( location.getLongitude() );
                     snapshotResponse.onResult( AwarenessFence.not(LocationFence.in( location.getLatitude(), location.getLongitude(), comboFence.getMeters(), comboFence.getMeters() )) );
                 }
 

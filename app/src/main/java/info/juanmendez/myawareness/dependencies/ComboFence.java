@@ -13,6 +13,8 @@ import org.androidannotations.annotations.EBean;
 public class ComboFence {
     
     private boolean location;
+    private double lat;
+    private double lon;
     private boolean headphones;
     private int meters;
     private AwarenessFence fence;
@@ -59,6 +61,22 @@ public class ComboFence {
 
     public void setFence(AwarenessFence fence) {
         this.fence = fence;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
     }
 
     public String getErrorMessage() {

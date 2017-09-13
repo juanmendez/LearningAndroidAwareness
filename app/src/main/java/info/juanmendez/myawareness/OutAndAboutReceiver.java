@@ -3,10 +3,10 @@ package info.juanmendez.myawareness;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 
@@ -27,7 +27,7 @@ import info.juanmendez.myawareness.utils.ComboFenceUtils;
  * contact@juanmendez.info
  */
 @EReceiver
-public class OutAndAboutReceiver extends BroadcastReceiver {
+public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
     @SystemService
     NotificationManager notificationManager;
 
@@ -44,6 +44,16 @@ public class OutAndAboutReceiver extends BroadcastReceiver {
 
         if( TextUtils.equals( action, FENCE_INTENT_FILTER) ){
             notify( context, intent );
+        }else if( TextUtils.equals( action, Intent.ACTION_REBOOT) ){
+
+            /*ComboFenceUtils.toComboFence( comboFence, PreferenceManager.getDefaultSharedPreferences(context));
+            ComboFenceUtils.generateFence( comboFence );
+
+            PendingIntent fenceIntent = PendingIntent.getBroadcast(rootContext, 0, new Intent(FENCE_INTENT_FILTER), 0);
+
+            Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
+                    .addFence(OutAndAboutReceiver.FENCE_KEY, comboFence.getFence(), fenceIntent)
+                    .build());*/
         }
     }
 

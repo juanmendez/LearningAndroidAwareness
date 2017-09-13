@@ -17,6 +17,8 @@ public class ComboFenceUtils {
     private static final String isHEADPHONES = "headphones";
     private static final String METERS = "meters";
     private static final String RUNNING = "running";
+    private static final String LAT = "latitude";
+    private static final String LON = "longitude";
 
     /**
      * This method fills in data from preference into a ComboFence object.
@@ -28,6 +30,8 @@ public class ComboFenceUtils {
 
         comboFence.setHeadphones( preference.getBoolean(isHEADPHONES, false));
         comboFence.setLocation( preference.getBoolean(isLOCATION, false));
+        comboFence.setLat( preference.getLong(LAT, 0));
+        comboFence.setLon( preference.getLong(LON, 0));
         comboFence.setMeters( preference.getInt(METERS, 0));
         comboFence.setRunning( preference.getBoolean(RUNNING, false));
         comboFence.setXfer(true);
@@ -42,6 +46,8 @@ public class ComboFenceUtils {
         SharedPreferences.Editor edit = preference.edit();
         edit.putBoolean( isHEADPHONES, comboFence.isHeadphones() );
         edit.putBoolean( isLOCATION, comboFence.isLocation() );
+        edit.putLong( LAT, (long) comboFence.getLat());
+        edit.putLong( LON, (long) comboFence.getLon());
         edit.putInt( METERS, comboFence.getMeters() );
         edit.putBoolean(RUNNING, comboFence.getRunning() );
         edit.apply();

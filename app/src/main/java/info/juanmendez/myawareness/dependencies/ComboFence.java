@@ -17,6 +17,15 @@ public class ComboFence {
     private int meters;
     private AwarenessFence fence;
     private String errorMessage="";
+    private Boolean completed = false;
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
 
     public boolean isLocation() {
         return location;

@@ -29,6 +29,7 @@
         <receiver android:name=".OutAndAboutReceiver_">
             <intent-filter>
                 <action android:name="info.juanmendez.myawareness.BACK_COMBO_RECEIVER_ACTION"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>

@@ -40,42 +40,46 @@ public class OutAndAboutReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
 
-        ComboFenceUtils.toComboFence( comboFence, PreferenceManager.getDefaultSharedPreferences(context));
-
-        FenceState fenceState = FenceState.extract(intent);
-
-        if(TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
-            ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), comboFence );
-
-            String message = "";
-            switch (fenceState.getCurrentState()) {
-                case FenceState.TRUE:
-                    comboFence.setRunning( true );
-                    notify( context,"TRUE!");
-                    break;
-                case FenceState.FALSE:
-                    comboFence.setRunning( false );
-                    notify( context,"FALSE!");
-                    break;
-                default:
-                case FenceState.UNKNOWN:
-                    comboFence.setRunning( false );
-                    notify( context, "UNKNOWN!");
-                    break;
-            }
+        if( TextUtils.equals( action, FENCE_INTENT_FILTER) ){
+            notify( context, intent );
         }
     }
 
-    private void notify( Context context, String message) {
+    private void notify( Context context, Intent intent ) {
+
+        FenceState fenceState = FenceState.extract(intent);
+        if( !TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) return;
+
+        ComboFenceUtils.toComboFence( comboFence, PreferenceManager.getDefaultSharedPreferences(context));
+
+        ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), comboFence );
+
+        String message = "";
+        switch (fenceState.getCurrentState()) {
+            case FenceState.TRUE:
+                comboFence.setRunning( true );
+                message = "TRUE!";
+                break;
+            case FenceState.FALSE:
+                comboFence.setRunning( false );
+                message = "FALSE!";
+                break;
+            default:
+            case FenceState.UNKNOWN:
+                comboFence.setRunning( false );
+                message = "UNKNOWN!";
+                break;
+        }
 
         String content = String.format( "result(%s), headphones(%s), location(%s)",
-                                        message,
-                                        comboFence.isHeadphones()?"yes":"no",
-                                        comboFence.isLocation()?"yes meters(" + comboFence.getMeters() + ")":"no");
+                message,
+                comboFence.isHeadphones()?"yes":"no",
+                comboFence.isLocation()?"yes meters(" + comboFence.getMeters() + ")":"no");
 
 
-        Intent intent = new Intent(context, MainActivity_.class);
+        intent = new Intent(context, MainActivity_.class);
         intent.putExtra( FENCE_KEY, true );
 
         int requestID = (int) System.currentTimeMillis();

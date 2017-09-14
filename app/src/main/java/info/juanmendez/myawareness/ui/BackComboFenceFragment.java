@@ -92,13 +92,11 @@ public class BackComboFenceFragment extends Fragment {
         void onCheckedLocation( boolean isChecked ){
             comboFence.setLocation( isChecked );
             showMeterText( isChecked );
-            onToggleButton(false);
         }
 
         @CheckedChange(R.id.comboFence_checkHeadphones)
         void onCheckedHeadphones( boolean isChecked ){
             comboFence.setHeadphones( isChecked );
-            onToggleButton(false);
         }
 
         @AfterTextChange(R.id.comboFence_meterText)
@@ -110,7 +108,6 @@ public class BackComboFenceFragment extends Fragment {
                 strMeters = "0";
 
             comboFence.setMeters( Integer.parseInt(strMeters) );
-            onToggleButton(false);
         }
 
         @CheckedChange(R.id.comboFence_toggleButton)
@@ -196,6 +193,7 @@ public class BackComboFenceFragment extends Fragment {
         if( comboFence.getFence() != null && !comboFence.getRunning() ){
             comboFence.setRunning(true);
             saveChangesToPreferences();
+
             PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(OutAndAboutReceiver.FENCE_INTENT_FILTER), 0);
 
             Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()

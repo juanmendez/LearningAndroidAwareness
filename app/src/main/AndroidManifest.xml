@@ -4,6 +4,8 @@
     package="info.juanmendez.myawareness">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name=".AwarenessApp_"
@@ -26,11 +28,16 @@
             android:name="com.google.android.awareness.API_KEY"
             android:value="@string/AWARENESS_API" />
 
-        <receiver android:name=".OutAndAboutReceiver_">
+        <receiver android:name=".OutAndAboutReceiver_" android:exported="false">
             <intent-filter>
                 <action android:name="info.juanmendez.myawareness.BACK_COMBO_RECEIVER_ACTION"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".RebootReceiver_" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
     </application>

@@ -25,14 +25,14 @@ public class AwarenessConnection {
     private GoogleApiClient client;
 
     @AfterInject
-    public void afterInject(){
+    void afterInject(){
         client = awarenessClient.getClient();
     }
 
-    public void connect(@NonNull ShortResponse<ConnectionResult> response){
+    public void connect(@NonNull ShortResponse<ConnectionResult> failedResponse){
         disconnect();
 
-        client.registerConnectionFailedListener( mFailedListener = connectionResult ->{response.onResult(connectionResult);});
+        client.registerConnectionFailedListener( mFailedListener = failedResponse::onResult);
         connect();
     }
 
@@ -56,5 +56,9 @@ public class AwarenessConnection {
 
     public GoogleApiClient getClient(){
         return client;
+    }
+
+    public boolean isConnected(){
+        return client.isConnected();
     }
 }

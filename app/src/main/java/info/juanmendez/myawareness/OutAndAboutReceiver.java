@@ -44,16 +44,6 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
 
         if( TextUtils.equals( action, FENCE_INTENT_FILTER) ){
             notify( context, intent );
-        }else if( TextUtils.equals( action, Intent.ACTION_REBOOT) ){
-
-            /*ComboFenceUtils.toComboFence( comboFence, PreferenceManager.getDefaultSharedPreferences(context));
-            ComboFenceUtils.generateFence( comboFence );
-
-            PendingIntent fenceIntent = PendingIntent.getBroadcast(rootContext, 0, new Intent(FENCE_INTENT_FILTER), 0);
-
-            Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
-                    .addFence(OutAndAboutReceiver.FENCE_KEY, comboFence.getFence(), fenceIntent)
-                    .build());*/
         }
     }
 
@@ -66,7 +56,8 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
 
         ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), comboFence );
 
-        String message = "";
+        String message;
+
         switch (fenceState.getCurrentState()) {
             case FenceState.TRUE:
                 comboFence.setRunning( true );
@@ -76,11 +67,11 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
                 comboFence.setRunning( false );
                 message = "FALSE!";
                 break;
-            default:
             case FenceState.UNKNOWN:
                 comboFence.setRunning( false );
                 message = "UNKNOWN!";
                 break;
+            default: message = "";
         }
 
         String content = String.format( "result(%s), headphones(%s), location(%s)",

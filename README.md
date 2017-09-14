@@ -5,7 +5,7 @@ This demo is broken in different fragment scenarios to show how to interact with
 *   LocationSnapshotFragment (Similar to HeadphoneSnapshotFragment, but provides last location tracked by the device)
 *   HeadphoneFenceFragment (shows how to create a [fence](https://developers.google.com/awareness/android-api/fence-create) to instruct Android Awareness to ping the app for headphone events)
 *  	ComboFenceFragment (Similar to HeadphoneFenceFragment but combines fences with AND, OR, NOT clauses)
-      * User can include a radious distance to make a fence based on current location
+      * User can include a radius distance to make a fence based on current location
       * User has also the option to include along with distance, if headphones should be plugged in. It's kind of silly.
 *   BackComboFenceFragment 
     * Works like ComboFenceFragment, but runs in the background so the app doesn't have to be present.

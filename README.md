@@ -10,3 +10,5 @@ This demo is broken in different fragment scenarios to show how to interact with
     * On reboot is capable of restarting the previous running fence
     * Last status appears in the notification bar
     * By clicking the notification, the user is taken to the fragment where the user can make edits, or simply stop the fence.
+
+[Sign up to get your key](https://developers.google.com/awareness/android-api/get-a-key) then create a new file under the `app` folder as `awareness.properties` then update with `AWARENESS_API=YOUR_SECRET_KEY`

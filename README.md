@@ -1,5 +1,5 @@
-# LearningAndroidAwareness
-This demo is broken in different fragment scenarios to show how to interact with [Android Awareness](https://developers.google.com/awareness/).
+# LearningGoogleAwareness
+This demo is broken in different fragment scenarios to show how to interact with [Google Awareness](https://developers.google.com/awareness/).
 
 *   HeadphoneSnapshotFragment (shows how to get a [snapshot](https://developers.google.com/awareness/android-api/snapshot-api-overview) if headphones are plugged or not)
 *   LocationSnapshotFragment (Similar to HeadphoneSnapshotFragment, but provides last location tracked by the device)

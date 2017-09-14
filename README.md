@@ -15,4 +15,4 @@ This demo is broken in different fragment scenarios to show how to interact with
 
 [Sign up to get your key](https://developers.google.com/awareness/android-api/get-a-key) then create a new file under the `app` folder as `awareness.properties` then update with `AWARENESS_API=YOUR_SECRET_KEY`
 
-It has been a ton of fun doing thid demo using [Android Annotations](http://androidannotations.org/)
+It has been a ton of fun doing this demo using [Android Annotations](http://androidannotations.org/)

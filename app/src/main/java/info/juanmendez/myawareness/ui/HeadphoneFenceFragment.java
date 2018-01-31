@@ -108,7 +108,7 @@ public class HeadphoneFenceFragment extends Fragment{
         FenceState fenceState = FenceState.extract(intent);
         if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
 
-            snackMePlease.i( "Receiver has being pinge");
+            snackMePlease.i( "Receiver has being pinged");
             switch (fenceState.getCurrentState()) {
                 case FenceState.TRUE:
                     writeMessage( "Headphones are plugged");

@@ -1,15 +1,14 @@
 apply plugin: "com.android.application"
-def supportLibVersion = "25.3.1"
+def supportLibVersion = "26.1.0"
 def playServicesVersion = "9.4.0"
-def aaVersion = "4.3.1"
+def aaVersion = "4.4.0"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
     defaultConfig {
         applicationId "info.juanmendez.myawareness"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

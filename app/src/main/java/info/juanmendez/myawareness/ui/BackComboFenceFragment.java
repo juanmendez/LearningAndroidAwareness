@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.view.View;
@@ -16,19 +17,29 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
+import com.google.android.gms.awareness.fence.FenceQueryRequest;
+import com.google.android.gms.awareness.fence.FenceQueryResult;
+import com.google.android.gms.awareness.fence.FenceState;
+import com.google.android.gms.awareness.fence.FenceStateMap;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.fence.LocationFence;
 import com.google.android.gms.awareness.state.HeadphoneState;
+import com.google.android.gms.common.api.ResultCallback;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.CheckedChange;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import info.juanmendez.myawareness.FragmentUtils;
@@ -51,6 +62,8 @@ import timber.log.Timber;
  */
 @EFragment(R.layout.fragment_combo_fence)
 public class BackComboFenceFragment extends Fragment {
+
+    private static final DateFormat sDATEFORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     @ViewById(R.id.comboFence_checkHeadphones)
     CheckBox mCheckboxHeadphones;
 
@@ -131,6 +144,8 @@ public class BackComboFenceFragment extends Fragment {
         mMeterText.setText( String.valueOf(mComboFence.getMeters()) );
         showMeterText( mComboFence.isLocation() );
         mToggleButton.setChecked( mComboFence.getRunning());
+
+        showFenceQueries();
     }
 
     void showMeterText(Boolean show ){
@@ -229,6 +244,49 @@ public class BackComboFenceFragment extends Fragment {
                     });
         }
 
+    }
+
+    /**
+     * As the code shows we get the current status of the fence.
+     */
+    @Click(R.id.fenceStatusBtn)
+    void showFenceQueries(){
+
+        Awareness.FenceApi.queryFences(mConnection.getAwarenessClient(),
+                FenceQueryRequest.forFences(Arrays.asList(OutAndAboutReceiver.FENCE_KEY)))
+                .setResultCallback(fenceQueryResult -> {
+
+                    if (!fenceQueryResult.getStatus().isSuccess()) {
+                        mMessageText.setText( "Could not query fence: " +  OutAndAboutReceiver.FENCE_KEY );
+                        return;
+                    }
+                    FenceStateMap map = fenceQueryResult.getFenceStateMap();
+                    for (String fenceKey : map.getFenceKeys()) {
+                        FenceState fenceState = map.getFenceState(fenceKey);
+
+                        mMessageText.append( "Fence " + fenceKey + " is= "
+                                + describeStatus(fenceState.getCurrentState())
+                                + ", was="
+                                + describeStatus(fenceState.getPreviousState())
+                                + ", lastUpdateTime="
+                                + sDATEFORMAT.format(new Date(fenceState.getLastFenceUpdateTimeMillis())));
+                    }
+                });
+
+    }
+
+    /**
+     * @see https://developers.google.com/android/reference/com/google/android/gms/awareness/fence/FenceState
+     * @param state
+     * @return
+     */
+    private String describeStatus( int state ){
+        if( state == FenceState.TRUE )
+            return "ON";
+        else if( state == FenceState.FALSE )
+            return "OFF";
+        else
+            return "UNKNOWN";
     }
 
     //<editor-fold desc="Preferences">

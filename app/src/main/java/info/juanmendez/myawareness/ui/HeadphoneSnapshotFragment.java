@@ -25,10 +25,10 @@ import info.juanmendez.myawareness.dependencies.AwarenessConnection;
 public class HeadphoneSnapshotFragment extends Fragment {
 
     @Bean
-    AwarenessConnection connection;
+    AwarenessConnection mConnection;
 
-    @ViewById
-    TextView snapshotTextMessage;
+    @ViewById(R.id.snapshotTextMessage)
+    TextView mTextMessage;
 
     @InstanceState
     String mMessage;
@@ -39,19 +39,19 @@ public class HeadphoneSnapshotFragment extends Fragment {
 
         lastMessage();
         FragmentUtils.setHomeEnabled( this, true );
-        connection.connect();
+        mConnection.connect();
     }
 
     @Override
     public void onPause(){
         super.onPause();
         FragmentUtils.setHomeEnabled( this, false );
-        connection.disconnect();
+        mConnection.disconnect();
     }
 
     @Click(R.id.snapshotBtn)
     public void getSnapshot(){
-        Awareness.SnapshotApi.getHeadphoneState( connection.getClient() ).setResultCallback(headphoneStateResult -> {
+        Awareness.SnapshotApi.getHeadphoneState( mConnection.getAwarenessClient() ).setResultCallback(headphoneStateResult -> {
             if( !headphoneStateResult.getStatus().isSuccess() )
                 return;
             writeMessage( headphoneStateResult.getHeadphoneState().toString() );
@@ -64,6 +64,6 @@ public class HeadphoneSnapshotFragment extends Fragment {
     }
 
     private void writeMessage( String message ){
-        snapshotTextMessage.setText( mMessage =message );
+        mTextMessage.setText( mMessage =message );
     }
 }

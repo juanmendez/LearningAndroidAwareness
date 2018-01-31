@@ -17,26 +17,26 @@ import info.juanmendez.myawareness.events.Response;
  */
 public class LocationSnapshotService {
 
-    RxPermissions rxPermissions;
-    AwarenessConnection connection;
+    RxPermissions mPermission;
+    AwarenessConnection mConnection;
 
     public static LocationSnapshotService build( Activity activity, AwarenessConnection connection ){
         return new LocationSnapshotService( activity, connection );
     }
 
     private LocationSnapshotService(Activity activity, AwarenessConnection connection ){
-        this.connection = connection;
-        rxPermissions  = new RxPermissions(activity);
+        this.mConnection = connection;
+        mPermission = new RxPermissions(activity);
     }
 
     @SuppressLint("MissingPermission")
     public void getSnapshot(Response<Location> response){
 
-        rxPermissions
+        mPermission
                 .request(Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(granted -> {
                     if (granted) {
-                        Awareness.SnapshotApi.getLocation( connection.getClient() ).setResultCallback(locationStateResult -> {
+                        Awareness.SnapshotApi.getLocation( mConnection.getAwarenessClient() ).setResultCallback(locationStateResult -> {
                             if( !locationStateResult.getStatus().isSuccess() ){
                                 response.onError( new Exception("Snapshot failed getting locationsnapshot"));
                                 return;

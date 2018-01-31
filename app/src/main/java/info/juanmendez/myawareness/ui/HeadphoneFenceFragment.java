@@ -33,13 +33,13 @@ import info.juanmendez.myawareness.dependencies.SnackMePlease;
 @EFragment(R.layout.fragment_headphone_fence)
 public class HeadphoneFenceFragment extends Fragment{
     @Bean
-    AwarenessConnection connection;
+    AwarenessConnection mConnection;
 
     @Bean
-    SnackMePlease snackMePlease;
+    SnackMePlease mSnackmePlease;
 
-    @ViewById
-    TextView headphoneFenceTextMessage;
+    @ViewById(R.id.headphoneFenceTextMessage)
+    TextView mTextMessage;
 
     @InstanceState
     String mMessage;
@@ -52,7 +52,7 @@ public class HeadphoneFenceFragment extends Fragment{
         super.onResume();
 
         lastMessage();
-        connection.connect();
+        mConnection.connect();
         turnOnFence();
         FragmentUtils.setHomeEnabled( this, true );
     }
@@ -76,19 +76,19 @@ public class HeadphoneFenceFragment extends Fragment{
         AwarenessFence fencePluggedIn = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
         PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(FENCE_INTENT_FILTER), 0);
 
-        Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
+        Awareness.FenceApi.updateFences(mConnection.getAwarenessClient(), new FenceUpdateRequest.Builder()
                 .addFence(FENCE_KEY, fencePluggedIn, fenceIntent)
                 .build()).setResultCallback(status -> {
             if (status.isSuccess()) {
-                snackMePlease.i("Fence for headphones in registered");
+                mSnackmePlease.i("Fence for headphones in registered");
             } else {
-                snackMePlease.i("Fence for headphones in NOT registered");
+                mSnackmePlease.i("Fence for headphones in NOT registered");
             }
         });
     }
 
     private void turnOffFence() {
-        connection.disconnect();
+        mConnection.disconnect();
     }
 
     private void lastMessage(){
@@ -100,7 +100,7 @@ public class HeadphoneFenceFragment extends Fragment{
     }
 
     private void writeMessage( String message ){
-        headphoneFenceTextMessage.setText( mMessage=message );
+        mTextMessage.setText( mMessage=message );
     }
 
     @Receiver(actions = FENCE_INTENT_FILTER )
@@ -108,7 +108,7 @@ public class HeadphoneFenceFragment extends Fragment{
         FenceState fenceState = FenceState.extract(intent);
         if (TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) {
 
-            snackMePlease.i( "Receiver has being pinged");
+            mSnackmePlease.i( "Receiver has being pinged");
             switch (fenceState.getCurrentState()) {
                 case FenceState.TRUE:
                     writeMessage( "Headphones are plugged");

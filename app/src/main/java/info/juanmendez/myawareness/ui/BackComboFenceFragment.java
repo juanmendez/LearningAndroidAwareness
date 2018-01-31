@@ -52,37 +52,37 @@ import timber.log.Timber;
 @EFragment(R.layout.fragment_combo_fence)
 public class BackComboFenceFragment extends Fragment {
     @ViewById(R.id.comboFence_checkHeadphones)
-    CheckBox checkboxHeadphones;
+    CheckBox mCheckboxHeadphones;
 
     @ViewById(R.id.comboFence_checkLocation)
-    CheckBox checkboxLocation;
+    CheckBox mCheckboxLocation;
 
     @ViewById(R.id.comboFence_meterText)
-    EditText meterText;
+    EditText mMeterText;
 
     @ViewById(R.id.comboFence_messageText)
-    TextView messageText;
+    TextView mMessageText;
 
     @ViewById(R.id.comboFence_toggleButton)
-    ToggleButton toggleButton;
+    ToggleButton mToggleButton;
 
     @SystemService
-    NotificationManager notificationManager;
+    NotificationManager mNotificationManager;
 
     @Bean
-    AwarenessConnection connection;
+    AwarenessConnection mConnection;
 
     @Bean
-    ComboFence comboFence;
+    ComboFence mComboFence;
 
     @Bean
-    SnackMePlease snackMePlease;
+    SnackMePlease mSnackmePlease;
 
     @Override
     public void onResume(){
         super.onResume();
         FragmentUtils.setHomeEnabled( this, true );
-        connection.connect();
+        mConnection.connect();
         turnOnFence();
         updateView();
     }
@@ -90,13 +90,13 @@ public class BackComboFenceFragment extends Fragment {
     //<editor-fold desc="Event-Listeners">
         @CheckedChange(R.id.comboFence_checkLocation)
         void onCheckedLocation( boolean isChecked ){
-            comboFence.setLocation( isChecked );
+            mComboFence.setLocation( isChecked );
             showMeterText( isChecked );
         }
 
         @CheckedChange(R.id.comboFence_checkHeadphones)
         void onCheckedHeadphones( boolean isChecked ){
-            comboFence.setHeadphones( isChecked );
+            mComboFence.setHeadphones( isChecked );
         }
 
         @AfterTextChange(R.id.comboFence_meterText)
@@ -107,17 +107,17 @@ public class BackComboFenceFragment extends Fragment {
             if( strMeters.isEmpty() )
                 strMeters = "0";
 
-            comboFence.setMeters( Integer.parseInt(strMeters) );
+            mComboFence.setMeters( Integer.parseInt(strMeters) );
         }
 
         @CheckedChange(R.id.comboFence_toggleButton)
         void onToggleButton( boolean isChecked ){
-            if( isChecked && comboFence.validate() ){
+            if( isChecked && mComboFence.validate() ){
                 buildUpFences();
             }else{
-                toggleButton.setChecked(false);
+                mToggleButton.setChecked(false);
                 turnOffFence();
-                snackMePlease.e( comboFence.getErrorMessage() );
+                mSnackmePlease.e( mComboFence.getErrorMessage() );
             }
         }
     //</editor-fold>
@@ -125,23 +125,23 @@ public class BackComboFenceFragment extends Fragment {
     void updateView(){
 
         syncFromPreferences();
-        checkboxLocation.setChecked( comboFence.isLocation());
-        checkboxHeadphones.setChecked( comboFence.isHeadphones());
+        mCheckboxLocation.setChecked( mComboFence.isLocation());
+        mCheckboxHeadphones.setChecked( mComboFence.isHeadphones());
 
-        meterText.setText( String.valueOf(comboFence.getMeters()) );
-        showMeterText( comboFence.isLocation() );
-        toggleButton.setChecked( comboFence.getRunning());
+        mMeterText.setText( String.valueOf(mComboFence.getMeters()) );
+        showMeterText( mComboFence.isLocation() );
+        mToggleButton.setChecked( mComboFence.getRunning());
     }
 
     void showMeterText(Boolean show ){
 
-        //reset if meterText is not displayed
+        //reset if mMeterText is not displayed
         if( !show ){
-            comboFence.setMeters( 0 );
-            meterText.setText("");
+            mComboFence.setMeters( 0 );
+            mMeterText.setText("");
         }
 
-        meterText.setVisibility( show? View.VISIBLE:View.GONE );
+        mMeterText.setVisibility( show? View.VISIBLE:View.GONE );
     }
 
     private void buildUpFences(){
@@ -150,7 +150,7 @@ public class BackComboFenceFragment extends Fragment {
         ShortResponse<AwarenessFence> snapshotResponse = fence -> {
             fences.add( fence );
 
-            if( fences.size() == comboFence.getFencesNeeded() ){
+            if( fences.size() == mComboFence.getFencesNeeded() ){
                 AwarenessFence awarenessFence;
 
                 if( fences.size() == 1 )
@@ -158,31 +158,31 @@ public class BackComboFenceFragment extends Fragment {
                 else
                     awarenessFence = AwarenessFence.and( fences );
 
-                comboFence.setFence( awarenessFence );
+                mComboFence.setFence( awarenessFence );
                 turnOnFence();
             }
         };
 
-        if( comboFence.isLocation() ){
+        if( mComboFence.isLocation() ){
             //getSnapshot ensures to have permission granted, so we can suppress it during onResult
-            LocationSnapshotService.build(getActivity(),connection).getSnapshot(new Response<Location>() {
+            LocationSnapshotService.build(getActivity(), mConnection).getSnapshot(new Response<Location>() {
 
                 @SuppressLint("MissingPermission")
                 @Override
                 public void onResult(Location location) {
-                    comboFence.setLat( location.getLatitude() );
-                    comboFence.setLon( location.getLongitude() );
-                    snapshotResponse.onResult( AwarenessFence.not(LocationFence.in( location.getLatitude(), location.getLongitude(), comboFence.getMeters(), comboFence.getMeters() )) );
+                    mComboFence.setLat( location.getLatitude() );
+                    mComboFence.setLon( location.getLongitude() );
+                    snapshotResponse.onResult( AwarenessFence.not(LocationFence.in( location.getLatitude(), location.getLongitude(), mComboFence.getMeters(), mComboFence.getMeters() )) );
                 }
 
                 @Override
                 public void onError(Exception exception) {
-                    snackMePlease.e( exception.getMessage() );
+                    mSnackmePlease.e( exception.getMessage() );
                 }
             });
         }
 
-        if( comboFence.isHeadphones() ){
+        if( mComboFence.isHeadphones() ){
             snapshotResponse.onResult(HeadphoneFence.during(HeadphoneState.PLUGGED_IN));
         }
     }
@@ -190,14 +190,14 @@ public class BackComboFenceFragment extends Fragment {
     //runs fence only if it is available.
     private void turnOnFence() {
 
-        if( comboFence.getFence() != null && !comboFence.getRunning() ){
-            comboFence.setRunning(true);
+        if( mComboFence.getFence() != null && !mComboFence.getRunning() ){
+            mComboFence.setRunning(true);
             saveChangesToPreferences();
 
             PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(OutAndAboutReceiver.FENCE_INTENT_FILTER), 0);
 
-            Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
-                    .addFence(OutAndAboutReceiver.FENCE_KEY, comboFence.getFence(), fenceIntent)
+            Awareness.FenceApi.updateFences(mConnection.getAwarenessClient(), new FenceUpdateRequest.Builder()
+                    .addFence(OutAndAboutReceiver.FENCE_KEY, mComboFence.getFence(), fenceIntent)
                     .build()).setResultCallback(status -> {
                 if (status.isSuccess()) {
                     Timber.i("Fence for headphones in registered");
@@ -210,21 +210,21 @@ public class BackComboFenceFragment extends Fragment {
 
     private void turnOffFence(){
 
-        if( comboFence.getRunning() ){
-            comboFence.setFence(null);
-            comboFence.setRunning(false);
+        if( mComboFence.getRunning() ){
+            mComboFence.setFence(null);
+            mComboFence.setRunning(false);
             saveChangesToPreferences();
 
             //clear any notifications
-            notificationManager.cancel( OutAndAboutReceiver.NOTIFICATION_KEY);
+            mNotificationManager.cancel( OutAndAboutReceiver.NOTIFICATION_KEY);
 
-            Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
+            Awareness.FenceApi.updateFences(mConnection.getAwarenessClient(), new FenceUpdateRequest.Builder()
                     .removeFence(OutAndAboutReceiver.FENCE_KEY).build())
                     .setResultCallback(status -> {
                         if( status.isSuccess() ){
-                            snackMePlease.i( "our fence successfully disconnected");
+                            mSnackmePlease.i( "our fence successfully disconnected");
                         }else{
-                            snackMePlease.e( "there was a problem disconnecting " + status.getStatusMessage() );
+                            mSnackmePlease.e( "there was a problem disconnecting " + status.getStatusMessage() );
                         }
                     });
         }
@@ -233,12 +233,12 @@ public class BackComboFenceFragment extends Fragment {
 
     //<editor-fold desc="Preferences">
     private void saveChangesToPreferences(){
-        ComboFenceUtils.toPreferences( PreferenceManager.getDefaultSharedPreferences(getContext()), comboFence );
+        ComboFenceUtils.toPreferences( PreferenceManager.getDefaultSharedPreferences(getContext()), mComboFence);
     }
 
     private void syncFromPreferences() {
-        if( !comboFence.getXfer() ){
-            ComboFenceUtils.toComboFence( comboFence, PreferenceManager.getDefaultSharedPreferences(getContext()));
+        if( !mComboFence.getXfer() ){
+            ComboFenceUtils.toComboFence(mComboFence, PreferenceManager.getDefaultSharedPreferences(getContext()));
         }
     }
     //</editor-fold>
@@ -247,6 +247,6 @@ public class BackComboFenceFragment extends Fragment {
     public void onPause(){
         super.onPause();
         FragmentUtils.setHomeEnabled( this, false );
-        connection.disconnect();
+        mConnection.disconnect();
     }
 }

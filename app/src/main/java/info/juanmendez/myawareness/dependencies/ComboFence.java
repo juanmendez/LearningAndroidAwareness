@@ -12,108 +12,108 @@ import org.androidannotations.annotations.EBean;
 @EBean
 public class ComboFence {
     
-    private boolean location;
-    private double lat;
-    private double lon;
-    private boolean headphones;
-    private int meters;
-    private AwarenessFence fence;
-    private String errorMessage="";
-    private Boolean running = false;
-    private Boolean xfer = false;
+    private boolean mLocation;
+    private double mLat;
+    private double mLon;
+    private boolean mHeadphones;
+    private int mMeters;
+    private AwarenessFence mFence;
+    private String mErrorMessage ="";
+    private Boolean mRunning = false;
+    private Boolean mXfer = false;
 
     //<editor-fold desc="Getter-Setter">
     public Boolean getRunning() {
-        return running;
+        return mRunning;
     }
 
     public void setRunning(Boolean running) {
-        this.running = running;
+        mRunning = running;
     }
 
     public boolean isLocation() {
-        return location;
+        return mLocation;
     }
 
     public void setLocation(boolean location) {
-        this.location = location;
+        mLocation = location;
     }
 
     public boolean isHeadphones() {
-        return headphones;
+        return mHeadphones;
     }
 
     public void setHeadphones(boolean headphones) {
-        this.headphones = headphones;
+        mHeadphones = headphones;
     }
 
     public int getMeters() {
-        return meters;
+        return mMeters;
     }
 
     public void setMeters(int meters) {
-        this.meters = meters;
+        mMeters = meters;
     }
 
     public AwarenessFence getFence() {
-        return fence;
+        return mFence;
     }
 
     public void setFence(AwarenessFence fence) {
-        this.fence = fence;
+        mFence = fence;
     }
 
     public double getLat() {
-        return lat;
+        return mLat;
     }
 
     public void setLat(double lat) {
-        this.lat = lat;
+        mLat = lat;
     }
 
     public double getLon() {
-        return lon;
+        return mLon;
     }
 
     public void setLon(double lon) {
-        this.lon = lon;
+        mLon = lon;
     }
 
     public String getErrorMessage() {
-        return errorMessage;
+        return mErrorMessage;
     }
 
     public Boolean getXfer() {
-        return xfer;
+        return mXfer;
     }
 
     public void setXfer(Boolean xfer) {
-        this.xfer = xfer;
+        mXfer = xfer;
     }
 
     //</editor-fold>
 
     /**
-     * test if we can start the fence or not
+     * test if we can start the mFence or not
      * @return true if valid, else not valid
      */
     public boolean validate(){
-        errorMessage = "";
+        mErrorMessage = "";
         if( isHeadphones() || isLocation() ){
 
             if( isLocation() && getMeters() == 0 ){
-                errorMessage = "Please enter distance!";
+                mErrorMessage = "Please enter distance!";
                 return false;
             }
 
             return true;
         }else{
-            errorMessage = "Please select at least one fence!";
+            mErrorMessage = "Please select at least one mFence!";
             return false;
         }
     }
 
     public int getFencesNeeded() {
-        return (location?1:0)+(headphones?1:0);
+        return (mLocation ?1:0)+(mHeadphones ?1:0);
     }
 }

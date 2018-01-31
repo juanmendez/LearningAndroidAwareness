@@ -26,16 +26,16 @@ import info.juanmendez.myawareness.events.Response;
 @EFragment(R.layout.fragment_snapshot)
 public class LocationSnapshotFragment extends Fragment {
     @Bean
-    AwarenessConnection connection;
+    AwarenessConnection mConnection;
 
-    @ViewById
-    TextView snapshotTextMessage;
+    @ViewById(R.id.snapshotTextMessage)
+    TextView mTextMessage;
 
     @InstanceState
     String mMessage;
 
     @Bean
-    SnackMePlease snackMePlease;
+    SnackMePlease mSnackmePlease;
 
     @Override
     public void onResume() {
@@ -43,21 +43,21 @@ public class LocationSnapshotFragment extends Fragment {
 
         lastMessage();
         FragmentUtils.setHomeEnabled( this, true );
-        connection.connect();
+        mConnection.connect();
     }
 
     @Override
     public void onPause(){
         super.onPause();
         FragmentUtils.setHomeEnabled( this, false );
-        connection.disconnect();
+        mConnection.disconnect();
 
     }
 
     @Click(R.id.snapshotBtn)
     public void getSnapshot(){
 
-        LocationSnapshotService.build(getActivity(), connection )
+        LocationSnapshotService.build(getActivity(), mConnection)
             .getSnapshot(new Response<Location>() {
                 @Override
                 public void onResult(Location location) {
@@ -77,6 +77,6 @@ public class LocationSnapshotFragment extends Fragment {
     }
 
     private void writeMessage( String message ){
-        snapshotTextMessage.setText( mMessage =message );
+        mTextMessage.setText( mMessage =message );
     }
 }

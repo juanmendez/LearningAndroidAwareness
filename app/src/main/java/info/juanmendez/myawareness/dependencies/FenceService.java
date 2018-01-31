@@ -40,21 +40,21 @@ import timber.log.Timber;
 @EBean
 public class FenceService {
     @RootContext
-    Context context;
+    Context mContext;
 
     @Bean
-    ComboFence comboFence;
+    ComboFence mComboFence;
 
     @Bean
-    AwarenessConnection connection;
+    AwarenessConnection mConnection;
 
     public void rebootFences(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        ComboFenceUtils.toComboFence(comboFence, preferences);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        ComboFenceUtils.toComboFence(mComboFence, preferences);
 
-        if( comboFence.getRunning() ){
-            if( !connection.isConnected() )
-                connection.connect();
+        if( mComboFence.getRunning() ){
+            if( !mConnection.isConnected() )
+                mConnection.connect();
 
             inflateFence();
             startAwareness();
@@ -67,30 +67,30 @@ public class FenceService {
 
         List<AwarenessFence> fences = new ArrayList<>();
 
-        if (comboFence.isHeadphones()) {
+        if (mComboFence.isHeadphones()) {
             fences.add(HeadphoneFence.during(HeadphoneState.PLUGGED_IN));
         }
 
-        if (comboFence.isLocation()) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                fences.add(AwarenessFence.not(LocationFence.in(comboFence.getLat(), comboFence.getLon(), comboFence.getMeters(), comboFence.getMeters())));
+        if (mComboFence.isLocation()) {
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                fences.add(AwarenessFence.not(LocationFence.in(mComboFence.getLat(), mComboFence.getLon(), mComboFence.getMeters(), mComboFence.getMeters())));
             }
         }
 
         if( !fences.isEmpty() ){
-            comboFence.setFence( fences.size()>1?AwarenessFence.and( fences ):fences.get(0) );
+            mComboFence.setFence( fences.size()>1?AwarenessFence.and( fences ):fences.get(0) );
         }else{
             Timber.i( "There are no fences available!" );
         }
     }
 
     private void startAwareness(){
-        if( comboFence.getFence() != null ){
-            PendingIntent fenceIntent = PendingIntent.getBroadcast(context, 0,
+        if( mComboFence.getFence() != null ){
+            PendingIntent fenceIntent = PendingIntent.getBroadcast(mContext, 0,
                     new Intent(OutAndAboutReceiver.FENCE_INTENT_FILTER), 0);
 
-            Awareness.FenceApi.updateFences(connection.getClient(), new FenceUpdateRequest.Builder()
-                    .addFence(OutAndAboutReceiver.FENCE_KEY, comboFence.getFence(), fenceIntent)
+            Awareness.FenceApi.updateFences(mConnection.getAwarenessClient(), new FenceUpdateRequest.Builder()
+                    .addFence(OutAndAboutReceiver.FENCE_KEY, mComboFence.getFence(), fenceIntent)
                     .build()).setResultCallback(status -> {
                 if (status.isSuccess()) {
                     Timber.i("Service was able to start combo fence" );

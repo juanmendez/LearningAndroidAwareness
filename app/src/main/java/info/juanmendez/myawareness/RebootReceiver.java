@@ -19,7 +19,7 @@ import info.juanmendez.myawareness.dependencies.FenceService;
 public class RebootReceiver extends WakefulBroadcastReceiver {
 
     @Bean
-    FenceService fenceService;
+    FenceService mFenceService;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,7 +27,7 @@ public class RebootReceiver extends WakefulBroadcastReceiver {
         String action = intent.getAction();
 
         if( action != null && (action.equals( Intent.ACTION_REBOOT ) || action.equals( Intent.ACTION_BOOT_COMPLETED )) ){
-            fenceService.rebootFences();
+            mFenceService.rebootFences();
         }
     }
 }

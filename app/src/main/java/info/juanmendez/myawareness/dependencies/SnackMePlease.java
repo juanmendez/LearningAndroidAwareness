@@ -16,24 +16,24 @@ import info.juanmendez.myawareness.R;
 
 @EBean(scope=EBean.Scope.Singleton)
 public class SnackMePlease {
-    View snackView;
+    private View mSnackView;
 
     public void setSnackView(View snackView) {
-        this.snackView = snackView;
+        this.mSnackView = snackView;
     }
 
     public void i(String message ){
-        if( snackView!=null && !message.isEmpty() ){
-            Snackbar snackbar = Snackbar.make(snackView, message, Snackbar.LENGTH_LONG );
-            snackbar.getView().setBackgroundColor(ContextCompat.getColor(snackView.getContext(), android.R.color.black ));
+        if( mSnackView !=null && !message.isEmpty() ){
+            Snackbar snackbar = Snackbar.make(mSnackView, message, Snackbar.LENGTH_LONG );
+            snackbar.getView().setBackgroundColor(ContextCompat.getColor(mSnackView.getContext(), android.R.color.black ));
             snackbar.show();
         }
     }
 
     public void e(String message) {
-        if( snackView!=null && !message.isEmpty() ){
-            Snackbar snackbar = Snackbar.make(snackView, message, Snackbar.LENGTH_LONG );
-            snackbar.getView().setBackgroundColor(ContextCompat.getColor(snackView.getContext(), R.color.colorAccent ));
+        if( mSnackView !=null && !message.isEmpty() ){
+            Snackbar snackbar = Snackbar.make(mSnackView, message, Snackbar.LENGTH_LONG );
+            snackbar.getView().setBackgroundColor(ContextCompat.getColor(mSnackView.getContext(), R.color.colorAccent ));
             snackbar.show();
         }
     }

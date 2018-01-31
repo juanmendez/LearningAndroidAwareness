@@ -24,14 +24,14 @@ import info.juanmendez.myawareness.dependencies.SnackMePlease;
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
     @Bean
-    AwarenessClient awarenessClient;
+    AwarenessClient mAwarenessClient;
 
     @Bean
-    SnackMePlease snackMePlease;
+    SnackMePlease mSnackmeplease;
 
     @AfterViews
     void afterViews(){
-        snackMePlease.setSnackView( findViewById(R.id.main_coordinatorLayout) );
+        mSnackmeplease.setSnackView( findViewById(R.id.main_coordinatorLayout) );
     }
 
     @Override
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Click
     void mainComboFence(){
-        showFragment( ComboFenceFragment_.builder().build(), "comboFence" );
+        showFragment( ComboFenceFragment_.builder().build(), "mComboFence" );
     }
 
     @Click

@@ -29,14 +29,14 @@ import info.juanmendez.myawareness.utils.ComboFenceUtils;
 @EReceiver
 public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
     @SystemService
-    NotificationManager notificationManager;
+    NotificationManager mNotificationManager;
 
     public static final String FENCE_INTENT_FILTER = "info.juanmendez.myawareness.BACK_COMBO_RECEIVER_ACTION";
     public static final String FENCE_KEY = "BackComboFenceKey";
     public static final int NOTIFICATION_KEY = 86038603;
 
     @Bean
-    ComboFence comboFence;
+    ComboFence mComboFence;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -52,23 +52,23 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
         FenceState fenceState = FenceState.extract(intent);
         if( !TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) return;
 
-        ComboFenceUtils.toComboFence( comboFence, PreferenceManager.getDefaultSharedPreferences(context));
+        ComboFenceUtils.toComboFence(mComboFence, PreferenceManager.getDefaultSharedPreferences(context));
 
-        ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), comboFence );
+        ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), mComboFence);
 
         String message;
 
         switch (fenceState.getCurrentState()) {
             case FenceState.TRUE:
-                comboFence.setRunning( true );
+                mComboFence.setRunning( true );
                 message = "TRUE!";
                 break;
             case FenceState.FALSE:
-                comboFence.setRunning( false );
+                mComboFence.setRunning( false );
                 message = "FALSE!";
                 break;
             case FenceState.UNKNOWN:
-                comboFence.setRunning( false );
+                mComboFence.setRunning( false );
                 message = "UNKNOWN!";
                 break;
             default: message = "";
@@ -76,8 +76,8 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
 
         String content = String.format( "result(%s), headphones(%s), location(%s)",
                 message,
-                comboFence.isHeadphones()?"yes":"no",
-                comboFence.isLocation()?"yes meters(" + comboFence.getMeters() + ")":"no");
+                mComboFence.isHeadphones()?"yes":"no",
+                mComboFence.isLocation()?"yes meters(" + mComboFence.getMeters() + ")":"no");
 
 
         intent = new Intent(context, MainActivity_.class);
@@ -96,6 +96,6 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
                 .setContentIntent( pendingIntent )
                 .build();
 
-        notificationManager.notify( NOTIFICATION_KEY,  notification );
+        mNotificationManager.notify( NOTIFICATION_KEY,  notification );
     }
 }

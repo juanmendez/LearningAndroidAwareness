@@ -19,46 +19,46 @@ import info.juanmendez.myawareness.events.ShortResponse;
 @EBean
 public class AwarenessConnection {
     @Bean
-    AwarenessClient awarenessClient;
+    AwarenessClient mAwarenessClient;
 
     private GoogleApiClient.OnConnectionFailedListener mFailedListener;
-    private GoogleApiClient client;
+    private GoogleApiClient mGoogleApiClient;
 
     @AfterInject
     void afterInject(){
-        client = awarenessClient.getClient();
+        mGoogleApiClient = mAwarenessClient.getClient();
     }
 
     public void connect(@NonNull ShortResponse<ConnectionResult> failedResponse){
         disconnect();
 
-        client.registerConnectionFailedListener( mFailedListener = failedResponse::onResult);
+        mGoogleApiClient.registerConnectionFailedListener( mFailedListener = failedResponse::onResult);
         connect();
     }
 
     public void connect(){
-        if( !client.isConnected() ){
-            client.connect();
+        if( !mGoogleApiClient.isConnected() ){
+            mGoogleApiClient.connect();
             mFailedListener = null;
         }
     }
 
     public void disconnect(){
-        if( client.isConnected() ){
-            client.disconnect();
+        if( mGoogleApiClient.isConnected() ){
+            mGoogleApiClient.disconnect();
 
             if( mFailedListener != null ){
-                client.unregisterConnectionFailedListener( mFailedListener );
+                mGoogleApiClient.unregisterConnectionFailedListener( mFailedListener );
                 mFailedListener = null;
             }
         }
     }
 
-    public GoogleApiClient getClient(){
-        return client;
+    public GoogleApiClient getAwarenessClient(){
+        return mGoogleApiClient;
     }
 
     public boolean isConnected(){
-        return client.isConnected();
+        return mGoogleApiClient.isConnected();
     }
 }

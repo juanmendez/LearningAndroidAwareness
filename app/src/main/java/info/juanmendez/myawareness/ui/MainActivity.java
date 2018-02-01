@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Click
     void mainComboFence(){
-        showFragment( ComboFenceFragment_.builder().build(), "mComboFence" );
+        showFragment( ComboFenceFragment_.builder().build(), "mComboParam" );
     }
 
     @Click

@@ -14,8 +14,8 @@ import com.google.android.gms.awareness.fence.AwarenessFence;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.HeadphoneFence;
 import com.google.android.gms.awareness.fence.LocationFence;
-import com.google.android.gms.awareness.state.HeadphoneState;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import info.juanmendez.myawareness.OutAndAboutReceiver;
+import info.juanmendez.myawareness.models.ComboParam;
+import info.juanmendez.myawareness.models.LocationParam;
 import info.juanmendez.myawareness.utils.ComboFenceUtils;
 import timber.log.Timber;
 
@@ -43,23 +45,31 @@ public class FenceService {
     Context mContext;
 
     @Bean
-    ComboFence mComboFence;
+    FenceRepo mFenceRepo;
+
+    ComboParam mComboParam;
 
     @Bean
     AwarenessConnection mConnection;
 
+
+    @AfterInject
+    void afterInject(){
+        mComboParam = mFenceRepo.getComboParam();
+    }
+
     public void rebootFences(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        ComboFenceUtils.toComboFence(mComboFence, preferences);
+        ComboFenceUtils.toComboFence(mComboParam, preferences);
 
-        if( mComboFence.getRunning() ){
+        if( mComboParam.getRunning() ){
             if( !mConnection.isConnected() )
                 mConnection.connect();
 
             inflateFence();
             startAwareness();
         }else{
-            Timber.e( "ComboFence wasn't running before reboot" );
+            Timber.e( "ComboParam wasn't running before reboot" );
         }
     }
 
@@ -67,30 +77,32 @@ public class FenceService {
 
         List<AwarenessFence> fences = new ArrayList<>();
 
-        if (mComboFence.isHeadphones()) {
-            fences.add(HeadphoneFence.during(HeadphoneState.PLUGGED_IN));
+        if (mComboParam.hasHeadphones()) {
+            fences.add(HeadphoneFence.during(mComboParam.getHeadphoneParam().getHeadphoneState()));
         }
 
-        if (mComboFence.isLocation()) {
+        if (mComboParam.hasLocation()) {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                fences.add(AwarenessFence.not(LocationFence.in(mComboFence.getLat(), mComboFence.getLon(), mComboFence.getMeters(), mComboFence.getMeters())));
+                LocationParam locationParam = mComboParam.getLocationParam();
+
+                fences.add(AwarenessFence.not(LocationFence.in(locationParam.getLat(), locationParam.getLon(), locationParam.getMeters(), locationParam.getMeters())));
             }
         }
 
         if( !fences.isEmpty() ){
-            mComboFence.setFence( fences.size()>1?AwarenessFence.and( fences ):fences.get(0) );
+            mFenceRepo.setAwarenessFence( fences.size()>1?AwarenessFence.and( fences ):fences.get(0) );
         }else{
             Timber.i( "There are no fences available!" );
         }
     }
 
     private void startAwareness(){
-        if( mComboFence.getFence() != null ){
+        if( mFenceRepo.getAwarenessFence() != null ){
             PendingIntent fenceIntent = PendingIntent.getBroadcast(mContext, 0,
                     new Intent(OutAndAboutReceiver.FENCE_INTENT_FILTER), 0);
 
             Awareness.FenceApi.updateFences(mConnection.getAwarenessClient(), new FenceUpdateRequest.Builder()
-                    .addFence(OutAndAboutReceiver.FENCE_KEY, mComboFence.getFence(), fenceIntent)
+                    .addFence(OutAndAboutReceiver.FENCE_KEY, mFenceRepo.getAwarenessFence(), fenceIntent)
                     .build()).setResultCallback(status -> {
                 if (status.isSuccess()) {
                     Timber.i("Service was able to start combo fence" );

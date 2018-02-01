@@ -11,11 +11,13 @@ import android.text.TextUtils;
 
 import com.google.android.gms.awareness.fence.FenceState;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EReceiver;
 import org.androidannotations.annotations.SystemService;
 
-import info.juanmendez.myawareness.dependencies.ComboFence;
+import info.juanmendez.myawareness.dependencies.FenceRepo;
+import info.juanmendez.myawareness.models.ComboParam;
 import info.juanmendez.myawareness.ui.MainActivity_;
 import info.juanmendez.myawareness.utils.ComboFenceUtils;
 
@@ -35,7 +37,14 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
     public static final int NOTIFICATION_KEY = 86038603;
 
     @Bean
-    ComboFence mComboFence;
+    FenceRepo mFenceRepo;
+
+    ComboParam mComboParam;
+
+    @AfterInject
+    void afterInject(){
+        mComboParam = mFenceRepo.getComboParam();
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -51,32 +60,39 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
         FenceState fenceState = FenceState.extract(intent);
         if( !TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) return;
 
-        ComboFenceUtils.toComboFence(mComboFence, PreferenceManager.getDefaultSharedPreferences(context));
+        ComboFenceUtils.toComboFence(mComboParam, PreferenceManager.getDefaultSharedPreferences(context));
 
-        ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), mComboFence);
+        ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), mComboParam);
 
         String message;
 
         switch (fenceState.getCurrentState()) {
             case FenceState.TRUE:
-                mComboFence.setRunning( true );
+                mComboParam.setRunning( true );
                 message = "TRUE!";
                 break;
             case FenceState.FALSE:
-                mComboFence.setRunning( false );
+                mComboParam.setRunning( false );
                 message = "FALSE!";
                 break;
             case FenceState.UNKNOWN:
-                mComboFence.setRunning( false );
+                mComboParam.setRunning( false );
                 message = "UNKNOWN!";
                 break;
             default: message = "";
         }
 
+
+        int meters = 0;
+
+        if( mComboParam.hasLocation() ){
+            meters = mComboParam.getLocationParam().getMeters();
+        }
+
         String content = String.format( "result(%s), headphones(%s), location(%s)",
                 message,
-                mComboFence.isHeadphones()?"yes":"no",
-                mComboFence.isLocation()?"yes meters(" + mComboFence.getMeters() + ")":"no");
+                mComboParam.hasHeadphones()?"yes":"no",
+                mComboParam.hasLocation()?"yes meters(" + meters + ")":"no");
 
 
         intent = new Intent(context, MainActivity_.class);
@@ -89,7 +105,7 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
 
 
         Notification notification = new Notification.Builder(context)
-                .setContentText("Back Combo Fence")
+                .setContentText("Back Combo FenceRepo")
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentText( content )
                 .setContentInfo( content )

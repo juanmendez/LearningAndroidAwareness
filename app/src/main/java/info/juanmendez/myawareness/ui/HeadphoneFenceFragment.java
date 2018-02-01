@@ -80,9 +80,9 @@ public class HeadphoneFenceFragment extends Fragment{
                 .addFence(FENCE_KEY, fencePluggedIn, fenceIntent)
                 .build()).setResultCallback(status -> {
             if (status.isSuccess()) {
-                mSnackmePlease.i("Fence for headphones in registered");
+                mSnackmePlease.i("FenceRepo for headphones in registered");
             } else {
-                mSnackmePlease.i("Fence for headphones in NOT registered");
+                mSnackmePlease.i("FenceRepo for headphones in NOT registered");
             }
         });
     }

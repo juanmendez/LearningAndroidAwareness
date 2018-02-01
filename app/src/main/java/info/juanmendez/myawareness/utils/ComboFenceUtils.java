@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import info.juanmendez.myawareness.dependencies.AwarenessPref_;
 import info.juanmendez.myawareness.dependencies.FenceRepo;
 import info.juanmendez.myawareness.models.ComboParam;
+import info.juanmendez.myawareness.models.HeadphoneParam;
+import info.juanmendez.myawareness.models.LocationParam;
 
 /**
  * Created by Juan Mendez on 9/12/2017.
@@ -30,9 +32,12 @@ public class ComboFenceUtils {
     public static String areThereErrors( FenceRepo fenceRepo){
         String errorMessage = "";
 
+
+        LocationParam locationParam = fenceRepo.getComboParam().getLocationParam();
+
         if( getFencesTotal( fenceRepo.getComboParam()) > 0 ){
 
-            if( fenceRepo.getComboParam().hasLocation() && fenceRepo.getComboParam().getLocationParam().getMeters() == 0 ){
+            if( locationParam.isTurnedOn() && locationParam.getMeters() == 0 ){
                 errorMessage = "Please enter distance!";
             }
         }else{
@@ -43,7 +48,10 @@ public class ComboFenceUtils {
     }
 
     public static int getFencesTotal( ComboParam comboParam ) {
-        return (comboParam.hasLocation() ?1:0)+( comboParam.hasHeadphones() ?1:0);
+        LocationParam locationParam = comboParam.getLocationParam();
+        HeadphoneParam headphoneParam = comboParam.getHeadphoneParam();
+
+        return (locationParam.isTurnedOn() ?1:0)+( headphoneParam.isTurnedOn() ?1:0);
     }
 
     /**

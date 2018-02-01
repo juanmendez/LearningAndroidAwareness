@@ -7,7 +7,8 @@ import com.google.android.gms.awareness.state.HeadphoneState;
  */
 
 public class HeadphoneParam {
-    public boolean mMustPlugIn = false;
+    private boolean mIsTurnedOn = false;
+    private boolean mMustPlugIn = false;
 
     public HeadphoneParam(boolean mustPlugIn) {
         mMustPlugIn = mustPlugIn;
@@ -19,6 +20,18 @@ public class HeadphoneParam {
 
     public void setMustPlugIn(boolean mustPlugIn) {
         mMustPlugIn = mustPlugIn;
+    }
+
+    public boolean isTurnedOn() {
+        return mIsTurnedOn;
+    }
+
+    public void setTurnedOn(boolean turnedOn) {
+        mIsTurnedOn = turnedOn;
+    }
+
+    public boolean isMustPlugIn() {
+        return mMustPlugIn;
     }
 
     public int getHeadphoneState(){

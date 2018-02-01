@@ -26,6 +26,7 @@ import java.util.List;
 
 import info.juanmendez.myawareness.OutAndAboutReceiver;
 import info.juanmendez.myawareness.models.ComboParam;
+import info.juanmendez.myawareness.models.HeadphoneParam;
 import info.juanmendez.myawareness.models.LocationParam;
 import info.juanmendez.myawareness.utils.ComboFenceUtils;
 import timber.log.Timber;
@@ -80,15 +81,15 @@ public class FenceService {
     private void inflateFence() {
 
         List<AwarenessFence> fences = new ArrayList<>();
+        HeadphoneParam headphoneParam = mComboParam.getHeadphoneParam();
+        LocationParam locationParam = mComboParam.getLocationParam();
 
-        if (mComboParam.hasHeadphones()) {
+        if (headphoneParam.isTurnedOn()) {
             fences.add(HeadphoneFence.during(mComboParam.getHeadphoneParam().getHeadphoneState()));
         }
 
-        if (mComboParam.hasLocation()) {
+        if (locationParam.isTurnedOn()) {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                LocationParam locationParam = mComboParam.getLocationParam();
-
                 fences.add(AwarenessFence.not(LocationFence.in(locationParam.getLat(), locationParam.getLon(), locationParam.getMeters(), locationParam.getMeters())));
             }
         }

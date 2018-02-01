@@ -112,13 +112,13 @@ public class BackComboFenceFragment extends Fragment {
     //<editor-fold desc="Event-Listeners">
         @CheckedChange(R.id.comboFence_checkLocation)
         void onCheckedLocation( boolean isChecked ){
-            mComboParam.setLocationParam( isChecked?new LocationParam():null );
+            mComboParam.getLocationParam().setTurnedOn( isChecked );
             showMeterText( isChecked );
         }
 
         @CheckedChange(R.id.comboFence_checkHeadphones)
         void onCheckedHeadphones( boolean isChecked ){
-            mComboParam.setHeadphoneParam( isChecked?new HeadphoneParam(true):null);
+            mComboParam.getHeadphoneParam().setTurnedOn( isChecked );
         }
 
         @AfterTextChange(R.id.comboFence_meterText)
@@ -129,7 +129,7 @@ public class BackComboFenceFragment extends Fragment {
             if( strMeters.isEmpty() )
                 strMeters = "0";
 
-            if( mComboParam.hasLocation() ){
+            if( mComboParam.getLocationParam().isTurnedOn() ){
                 mComboParam.getLocationParam().setMeters( Integer.parseInt(strMeters) );
             }
         }
@@ -151,16 +151,20 @@ public class BackComboFenceFragment extends Fragment {
     void updateView(){
 
         syncFromPreferences();
-        mCheckboxLocation.setChecked( mComboParam.hasLocation());
-        mCheckboxHeadphones.setChecked( mComboParam.hasHeadphones());
 
-        if( mComboParam.hasLocation() ){
+        HeadphoneParam headphoneParam = mComboParam.getHeadphoneParam();
+        LocationParam locationParam = mComboParam.getLocationParam();
+
+        mCheckboxLocation.setChecked( headphoneParam.isTurnedOn());
+        mCheckboxHeadphones.setChecked( locationParam.isTurnedOn());
+
+        if( headphoneParam.isTurnedOn() ){
             mMeterText.setText( String.valueOf(mComboParam.getLocationParam().getMeters()) );
         }else{
             mMeterText.setText( "0" );
         }
 
-        showMeterText( mComboParam.hasLocation() );
+        showMeterText( headphoneParam.isTurnedOn() );
         mToggleButton.setChecked( mComboParam.getFenceRunning());
 
         showFenceQueries();
@@ -170,7 +174,7 @@ public class BackComboFenceFragment extends Fragment {
 
         //reset if mMeterText is not displayed
         if( !show ){
-            mComboParam.setLocationParam( null );
+            mComboParam.getLocationParam().setTurnedOn( false );
             mMeterText.setText("");
         }
 
@@ -196,7 +200,10 @@ public class BackComboFenceFragment extends Fragment {
             }
         };
 
-        if( mComboParam.hasLocation() ){
+        HeadphoneParam headphoneParam = mComboParam.getHeadphoneParam();
+        LocationParam locationParam = mComboParam.getLocationParam();
+
+        if( locationParam.isTurnedOn() ){
             //getSnapshot ensures to have permission granted, so we can suppress it during onResult
             LocationSnapshotService.build(getActivity(), mConnection).getSnapshot(new Response<Location>() {
 
@@ -204,7 +211,7 @@ public class BackComboFenceFragment extends Fragment {
                 @Override
                 public void onResult(Location location) {
 
-                    if( mComboParam.hasLocation() ){
+                    if( locationParam.isTurnedOn() ){
                         mComboParam.getLocationParam().setLat( location.getLatitude() );
                         mComboParam.getLocationParam().setLon( location.getLongitude() );
 
@@ -222,7 +229,7 @@ public class BackComboFenceFragment extends Fragment {
             });
         }
 
-        if( mComboParam.hasHeadphones() ){
+        if( headphoneParam.isTurnedOn() ){
             snapshotResponse.onResult(HeadphoneFence.during(HeadphoneState.PLUGGED_IN));
         }
     }

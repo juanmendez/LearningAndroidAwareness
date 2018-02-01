@@ -1,4 +1,5 @@
 package info.juanmendez.myawareness.models;
+import android.support.annotation.NonNull;
 
 /**
  * Created by Juan Mendez on 9/10/2017.
@@ -13,30 +14,24 @@ public class ComboParam {
     private Boolean mFenceRunning = false;
     private Boolean mBuiltOnReboot = false;
 
-    private HeadphoneParam mHeadphoneParam;
-    private LocationParam mLocationParam;
+    private HeadphoneParam mHeadphoneParam = new HeadphoneParam(true);
+    private LocationParam mLocationParam = new LocationParam();
 
     //<editor-fold desc="Getter-Setter">
-    public boolean hasLocation() {
-        return mLocationParam != null;
-    }
-
+    @NonNull
     public LocationParam getLocationParam() {
         return mLocationParam;
     }
 
-    public void setLocationParam(LocationParam location) {
+    public void setLocationParam( @NonNull LocationParam location) {
         mLocationParam = location;
     }
 
-    public boolean hasHeadphones() {
-        return mHeadphoneParam != null;
-    }
-
-    public void setHeadphoneParam(HeadphoneParam headphones) {
+    public void setHeadphoneParam( @NonNull HeadphoneParam headphones) {
         mHeadphoneParam = headphones;
     }
 
+    @NonNull
     public HeadphoneParam getHeadphoneParam() {
         return mHeadphoneParam;
     }

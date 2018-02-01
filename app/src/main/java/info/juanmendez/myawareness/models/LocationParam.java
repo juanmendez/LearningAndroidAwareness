@@ -5,9 +5,18 @@ package info.juanmendez.myawareness.models;
  */
 
 public class LocationParam {
-    double mLon = 0;
-    double mLat = 0;
-    int mMeters = 0;
+    private boolean mIsTurnedOn = false;
+    private double mLon = 0;
+    private double mLat = 0;
+    private int mMeters = 0;
+
+    public boolean isTurnedOn() {
+        return mIsTurnedOn;
+    }
+
+    public void setTurnedOn(boolean turnedOn) {
+        mIsTurnedOn = turnedOn;
+    }
 
     public double getLon() {
         return mLon;

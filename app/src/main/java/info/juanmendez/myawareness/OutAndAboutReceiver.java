@@ -19,6 +19,8 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import info.juanmendez.myawareness.dependencies.AwarenessPref_;
 import info.juanmendez.myawareness.dependencies.FenceRepo;
 import info.juanmendez.myawareness.models.ComboParam;
+import info.juanmendez.myawareness.models.HeadphoneParam;
+import info.juanmendez.myawareness.models.LocationParam;
 import info.juanmendez.myawareness.ui.MainActivity_;
 import info.juanmendez.myawareness.utils.ComboFenceUtils;
 
@@ -87,16 +89,18 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
         }
 
 
+        HeadphoneParam headphoneParam = mComboParam.getHeadphoneParam();
+        LocationParam locationParam = mComboParam.getLocationParam();
         int meters = 0;
 
-        if( mComboParam.hasLocation() ){
+        if( locationParam.isTurnedOn() ){
             meters = mComboParam.getLocationParam().getMeters();
         }
 
         String content = String.format( "result(%s), headphones(%s), location(%s)",
                 message,
-                mComboParam.hasHeadphones()?"yes":"no",
-                mComboParam.hasLocation()?"yes meters(" + meters + ")":"no");
+                headphoneParam.isTurnedOn()?"yes":"no",
+                locationParam.isTurnedOn()?"yes meters(" + meters + ")":"no");
 
 
         intent = new Intent(context, MainActivity_.class);

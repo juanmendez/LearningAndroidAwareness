@@ -1,15 +1,10 @@
 package info.juanmendez.myawareness.utils;
 
-import android.content.SharedPreferences;
-
 import com.google.gson.Gson;
 
-import info.juanmendez.myawareness.dependencies.AwarenessPref;
 import info.juanmendez.myawareness.dependencies.AwarenessPref_;
 import info.juanmendez.myawareness.dependencies.FenceRepo;
 import info.juanmendez.myawareness.models.ComboParam;
-import info.juanmendez.myawareness.models.HeadphoneParam;
-import info.juanmendez.myawareness.models.LocationParam;
 
 /**
  * Created by Juan Mendez on 9/12/2017.
@@ -63,8 +58,8 @@ public class ComboFenceUtils {
         if( jsonComboParam != null ){
             comboParam.setHeadphoneParam( jsonComboParam.getHeadphoneParam() );
             comboParam.setLocationParam( jsonComboParam.getLocationParam() );
-            comboParam.setXfer( jsonComboParam.getXfer() );
-            comboParam.setRunning( jsonComboParam.getRunning() );
+            comboParam.setBuiltOnReboot( jsonComboParam.getBuiltOnReboot() );
+            comboParam.setFenceRunning( jsonComboParam.getFenceRunning() );
         }
     }
 

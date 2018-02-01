@@ -16,10 +16,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Radius in meters for awarenessFence"
-        android:inputType="number" android:maxLength="2"/>
+        android:inputType="number" android:maxLength="3"/>
 
     <CheckBox
-        android:text="Apply Headphones-on awarenessFence"
+        android:text="Apply Headphones-mustPlugIn awarenessFence"
         android:id="@+id/comboFence_checkHeadphones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -27,13 +27,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Turn awarenessFence on|off" />
+        android:text="Turn awarenessFence mustPlugIn|off" />
 
     <ToggleButton
         android:id="@+id/comboFence_toggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Turn awarenessFence on|off" />
+        android:text="Turn awarenessFence mustPlugIn|off" />
 
     <ScrollView
         android:layout_width="match_parent"

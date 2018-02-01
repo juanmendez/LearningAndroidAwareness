@@ -14,6 +14,9 @@ import info.juanmendez.myawareness.events.Response;
  * Created by Juan Mendez on 9/11/2017.
  * www.juanmendez.info
  * contact@juanmendez.info
+ *
+ * Gives you back a snapshot of last known location.
+ * This doesn't mean it provides the most current loation. There is one service from Google Map Api which does it
  */
 public class LocationSnapshotService {
 

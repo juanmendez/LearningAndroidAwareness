@@ -161,7 +161,7 @@ public class BackComboFenceFragment extends Fragment {
         }
 
         showMeterText( mComboParam.hasLocation() );
-        mToggleButton.setChecked( mComboParam.getRunning());
+        mToggleButton.setChecked( mComboParam.getFenceRunning());
 
         showFenceQueries();
     }
@@ -230,8 +230,8 @@ public class BackComboFenceFragment extends Fragment {
     //runs fence only if it is available.
     private void turnOnFence() {
 
-        if( mFenceRepo.getAwarenessFence() != null && !mComboParam.getRunning() ){
-            mComboParam.setRunning(true);
+        if( mFenceRepo.getAwarenessFence() != null && !mComboParam.getFenceRunning() ){
+            mComboParam.setFenceRunning(true);
             saveChangesToPreferences();
 
             PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(OutAndAboutReceiver.FENCE_INTENT_FILTER), 0);
@@ -250,9 +250,9 @@ public class BackComboFenceFragment extends Fragment {
 
     private void turnOffFence(){
 
-        if( mComboParam.getRunning() ){
+        if( mComboParam.getFenceRunning() ){
             mFenceRepo.setAwarenessFence(null);
-            mComboParam.setRunning(false);
+            mComboParam.setFenceRunning(false);
             saveChangesToPreferences();
 
             //clear any notifications
@@ -320,7 +320,7 @@ public class BackComboFenceFragment extends Fragment {
     }
 
     private void syncFromPreferences() {
-        if( !mComboParam.getXfer() ){
+        if( !mComboParam.getBuiltOnReboot() ){
             ComboFenceUtils.toComboFence(mComboParam, mAwarenessPref);
         }
     }

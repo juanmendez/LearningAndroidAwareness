@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.text.TextUtils;
 
@@ -73,15 +72,15 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
 
         switch (fenceState.getCurrentState()) {
             case FenceState.TRUE:
-                mComboParam.setRunning( true );
+                mComboParam.setFenceRunning( true );
                 message = "TRUE!";
                 break;
             case FenceState.FALSE:
-                mComboParam.setRunning( false );
+                mComboParam.setFenceRunning( false );
                 message = "FALSE!";
                 break;
             case FenceState.UNKNOWN:
-                mComboParam.setRunning( false );
+                mComboParam.setFenceRunning( false );
                 message = "UNKNOWN!";
                 break;
             default: message = "";

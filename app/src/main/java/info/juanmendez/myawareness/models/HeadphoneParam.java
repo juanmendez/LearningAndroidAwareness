@@ -7,21 +7,21 @@ import com.google.android.gms.awareness.state.HeadphoneState;
  */
 
 public class HeadphoneParam {
-    public boolean mIsOn = false;
+    public boolean mMustPlugIn = false;
 
-    public HeadphoneParam(boolean isOn) {
-        mIsOn = isOn;
+    public HeadphoneParam(boolean mustPlugIn) {
+        mMustPlugIn = mustPlugIn;
     }
 
-    public boolean isOn() {
-        return mIsOn;
+    public boolean mustPlugin() {
+        return mMustPlugIn;
     }
 
-    public void setOn(boolean on) {
-        mIsOn = on;
+    public void setMustPlugIn(boolean mustPlugIn) {
+        mMustPlugIn = mustPlugIn;
     }
 
     public int getHeadphoneState(){
-        return mIsOn ? HeadphoneState.PLUGGED_IN: HeadphoneState.UNPLUGGED;
+        return mMustPlugIn ? HeadphoneState.PLUGGED_IN: HeadphoneState.UNPLUGGED;
     }
 }

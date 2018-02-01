@@ -66,7 +66,7 @@ public class FenceService {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         ComboFenceUtils.toComboFence(mComboParam, mAwarenessPref);
 
-        if( mComboParam.getRunning() ){
+        if( mComboParam.getFenceRunning() ){
             if( !mConnection.isConnected() )
                 mConnection.connect();
 

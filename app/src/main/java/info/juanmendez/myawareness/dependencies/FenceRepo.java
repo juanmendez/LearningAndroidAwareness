@@ -9,6 +9,7 @@ import io.reactivex.annotations.NonNull;
 
 /**
  * Created by juan on 1/31/18.
+ * Keeps a hold of comboParam, and awarenessFence objects
  */
 @EBean(scope = EBean.Scope.Singleton)
 public class FenceRepo {

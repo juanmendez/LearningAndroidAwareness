@@ -22,6 +22,8 @@ import info.juanmendez.myawareness.events.Response;
  * Created by Juan Mendez on 9/9/2017.
  * www.juanmendez.info
  * contact@juanmendez.info
+ *
+ * Provides the last known location. Which is nice but can be different than the current location
  */
 @EFragment(R.layout.fragment_snapshot)
 public class LocationSnapshotFragment extends Fragment {

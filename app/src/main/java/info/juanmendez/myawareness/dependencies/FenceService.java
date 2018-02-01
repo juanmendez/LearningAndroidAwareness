@@ -54,6 +54,7 @@ public class FenceService {
     @Bean
     AwarenessConnection mConnection;
 
+
     @Pref
     AwarenessPref_ mAwarenessPref;
 
@@ -63,11 +64,17 @@ public class FenceService {
         mComboParam = mFenceRepo.getComboParam();
     }
 
+    /**
+     * SharedPreference stores previous mComboParam in a json string which is then deserialized
+     * and whose values are placed in mComboParam. Once that takes effect, then inflateFence() is called
+     * to create AwarenessFence, and then it goes to startAwareness()
+     */
     public void rebootFences(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
         ComboFenceUtils.toComboFence(mComboParam, mAwarenessPref);
 
-        if( mComboParam.getFenceRunning() ){
+        if( mComboParam.getIsTurnedOn() ){
             if( !mConnection.isConnected() )
                 mConnection.connect();
 
@@ -78,6 +85,9 @@ public class FenceService {
         }
     }
 
+    /**
+     * based on FenceParams, this method is able to generate an AwarenessFence, and apply it in mFenceRepo
+     */
     private void inflateFence() {
 
         List<AwarenessFence> fences = new ArrayList<>();

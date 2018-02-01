@@ -18,7 +18,7 @@ import info.juanmendez.myawareness.dependencies.AwarenessClient;
 import info.juanmendez.myawareness.dependencies.SnackMePlease;
 
 /**
- * This is a very simple demo showing how to obtain the most current state of headphones!
+ * This activity lists buttons to open each fragment for learning Google Awareness
  */
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_main)

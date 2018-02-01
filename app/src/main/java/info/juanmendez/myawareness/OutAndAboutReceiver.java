@@ -74,15 +74,15 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
 
         switch (fenceState.getCurrentState()) {
             case FenceState.TRUE:
-                mComboParam.setFenceRunning( true );
+                mComboParam.setIsTurnedOn( true );
                 message = "TRUE!";
                 break;
             case FenceState.FALSE:
-                mComboParam.setFenceRunning( false );
+                mComboParam.setIsTurnedOn( false );
                 message = "FALSE!";
                 break;
             case FenceState.UNKNOWN:
-                mComboParam.setFenceRunning( false );
+                mComboParam.setIsTurnedOn( false );
                 message = "UNKNOWN!";
                 break;
             default: message = "";

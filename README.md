@@ -9,7 +9,7 @@ This demo is broken in different fragment scenarios to show how to interact with
       * User has also the option to include along with distance, if headphones should be plugged in. It's kind of silly.
 *   BackComboFenceFragment 
     * Works like ComboFenceFragment, but runs in the background so the app doesn't have to be present.
-    * On reboot is capable of restarting the previous fenceRunning awarenessFence
+    * On reboot is capable of restarting the previous isTurnedOn awarenessFence
     * Last status appears in the notification bar
     * By clicking the notification, the user is taken to the fragment where the user can make edits, or simply stop the awarenessFence.
 

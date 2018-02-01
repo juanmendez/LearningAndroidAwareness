@@ -29,6 +29,10 @@ import info.juanmendez.myawareness.dependencies.SnackMePlease;
  * Created by Juan Mendez on 9/9/2017.
  * www.juanmendez.info
  * contact@juanmendez.info
+ *
+ * shows how to create an awarenessFence
+ * https://developers.google.com/awareness/android-api/awarenessFence-create
+ * to instruct Android Awareness to ping the app for mustPlugIn events
  */
 @EFragment(R.layout.fragment_headphone_fence)
 public class HeadphoneFenceFragment extends Fragment{

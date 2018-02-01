@@ -59,6 +59,8 @@ import timber.log.Timber;
  * Created by Juan Mendez on 9/10/2017.
  * www.juanmendez.info
  * contact@juanmendez.info
+ *
+ * Works like ComboFenceFragment, but runs in the background so the app doesn't have to be present.
  */
 @EFragment(R.layout.fragment_combo_fence)
 public class BackComboFenceFragment extends Fragment {
@@ -165,7 +167,7 @@ public class BackComboFenceFragment extends Fragment {
         }
 
         showMeterText( headphoneParam.isTurnedOn() );
-        mToggleButton.setChecked( mComboParam.getFenceRunning());
+        mToggleButton.setChecked( mComboParam.getIsTurnedOn());
 
         showFenceQueries();
     }
@@ -237,8 +239,8 @@ public class BackComboFenceFragment extends Fragment {
     //runs fence only if it is available.
     private void turnOnFence() {
 
-        if( mFenceRepo.getAwarenessFence() != null && !mComboParam.getFenceRunning() ){
-            mComboParam.setFenceRunning(true);
+        if( mFenceRepo.getAwarenessFence() != null && !mComboParam.getIsTurnedOn() ){
+            mComboParam.setIsTurnedOn(true);
             saveChangesToPreferences();
 
             PendingIntent fenceIntent = PendingIntent.getBroadcast(getActivity(), 0, new Intent(OutAndAboutReceiver.FENCE_INTENT_FILTER), 0);
@@ -257,9 +259,9 @@ public class BackComboFenceFragment extends Fragment {
 
     private void turnOffFence(){
 
-        if( mComboParam.getFenceRunning() ){
+        if( mComboParam.getIsTurnedOn() ){
             mFenceRepo.setAwarenessFence(null);
-            mComboParam.setFenceRunning(false);
+            mComboParam.setIsTurnedOn(false);
             saveChangesToPreferences();
 
             //clear any notifications

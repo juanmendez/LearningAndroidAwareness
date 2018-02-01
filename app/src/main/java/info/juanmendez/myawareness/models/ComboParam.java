@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
  */
 public class ComboParam {
 
-    private Boolean mFenceRunning = false;
+    private Boolean mIsTurnedOn = false;
     private Boolean mBuiltOnReboot = false;
 
     private HeadphoneParam mHeadphoneParam = new HeadphoneParam(true);
@@ -44,12 +44,12 @@ public class ComboParam {
         mBuiltOnReboot = builtOnReboot;
     }
 
-    public Boolean getFenceRunning() {
-        return mFenceRunning;
+    public Boolean getIsTurnedOn() {
+        return mIsTurnedOn;
     }
 
-    public void setFenceRunning(Boolean fenceRunning) {
-        mFenceRunning = fenceRunning;
+    public void setIsTurnedOn(Boolean isTurnedOn) {
+        mIsTurnedOn = isTurnedOn;
     }
     //</editor-fold>
 }

@@ -67,7 +67,7 @@ public class ComboFenceUtils {
             comboParam.setHeadphoneParam( jsonComboParam.getHeadphoneParam() );
             comboParam.setLocationParam( jsonComboParam.getLocationParam() );
             comboParam.setBuiltOnReboot( true );
-            comboParam.setFenceRunning( jsonComboParam.getFenceRunning() );
+            comboParam.setIsTurnedOn( jsonComboParam.getIsTurnedOn() );
         }
     }
 

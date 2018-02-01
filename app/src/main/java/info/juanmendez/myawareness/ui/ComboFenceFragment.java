@@ -52,6 +52,10 @@ import timber.log.Timber;
  * Created by Juan Mendez on 9/10/2017.
  * www.juanmendez.info
  * contact@juanmendez.info
+ *
+ * (Similar to HeadphoneFenceFragment but combines fences with AND, OR, NOT clauses)
+ * User can include a radius distance to make a awarenessFence based mustPlugIn current location
+ * User has also the option to include along with distance, if headphones should be plugged in. It's kind of silly.
  */
 @EFragment(R.layout.fragment_combo_fence)
 public class ComboFenceFragment extends Fragment {

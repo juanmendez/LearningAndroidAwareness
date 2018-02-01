@@ -20,6 +20,8 @@ import info.juanmendez.myawareness.dependencies.AwarenessConnection;
  * Created by Juan Mendez on 9/9/2017.
  * www.juanmendez.info
  * contact@juanmendez.info
+ *
+ * shows how to get a snapshot https://developers.google.com/awareness/android-api/snapshot-api-overview if headphones are plugged or not
  */
 @EFragment(R.layout.fragment_snapshot)
 public class HeadphoneSnapshotFragment extends Fragment {

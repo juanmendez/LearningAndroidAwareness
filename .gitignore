@@ -9,3 +9,5 @@
 .externalNativeBuild
 \grdle/
 \.idea/
+
+app/awareness\.properties

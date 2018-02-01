@@ -2,6 +2,11 @@ package info.juanmendez.myawareness.utils;
 
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+
+import info.juanmendez.myawareness.dependencies.AwarenessPref;
+import info.juanmendez.myawareness.dependencies.AwarenessPref_;
+import info.juanmendez.myawareness.dependencies.FenceRepo;
 import info.juanmendez.myawareness.models.ComboParam;
 import info.juanmendez.myawareness.models.HeadphoneParam;
 import info.juanmendez.myawareness.models.LocationParam;
@@ -22,27 +27,45 @@ public class ComboFenceUtils {
     private static final String LAT = "latitude";
     private static final String LON = "longitude";
 
+
+    /**
+     * test if we can start the mAwarenessFence or not
+     * @return true if valid, else not valid
+     */
+    public static String areThereErrors( FenceRepo fenceRepo){
+        String errorMessage = "";
+
+        if( getFencesTotal( fenceRepo.getComboParam()) > 0 ){
+
+            if( fenceRepo.getComboParam().hasLocation() && fenceRepo.getComboParam().getLocationParam().getMeters() == 0 ){
+                errorMessage = "Please enter distance!";
+            }
+        }else{
+            errorMessage = "Please select at least one mAwarenessFence!";
+        }
+
+        return errorMessage;
+    }
+
+    public static int getFencesTotal( ComboParam comboParam ) {
+        return (comboParam.hasLocation() ?1:0)+( comboParam.hasHeadphones() ?1:0);
+    }
+
     /**
      * This method fills in data from preference into a ComboParam object.
      * We make use of this so we have less to write on our components
      * @param comboParam object being updated
      * @param preference default preferences to pull data from
      */
-    public static void toComboFence(ComboParam comboParam, SharedPreferences preference ){
+    public static void toComboFence(ComboParam comboParam, AwarenessPref_ preference ){
+        ComboParam jsonComboParam = new Gson().fromJson( preference.comboParamJson().getOr(""), ComboParam.class );
 
-        if( preference.getBoolean(isHEADPHONES, false) ){
-            comboParam.setHeadphoneParam( new HeadphoneParam(true));
+        if( jsonComboParam != null ){
+            comboParam.setHeadphoneParam( jsonComboParam.getHeadphoneParam() );
+            comboParam.setLocationParam( jsonComboParam.getLocationParam() );
+            comboParam.setXfer( jsonComboParam.getXfer() );
+            comboParam.setRunning( jsonComboParam.getRunning() );
         }
-
-        if( preference.getBoolean(isLOCATION, false) ){
-            LocationParam locationParam = new LocationParam();
-            locationParam.setLat(preference.getLong(LAT, 0));
-            locationParam.setLon(preference.getLong(LON, 0));
-            locationParam.setMeters(preference.getInt(METERS, 0));
-        }
-
-        comboParam.setRunning( preference.getBoolean(RUNNING, false));
-        comboParam.setXfer(true);
     }
 
     /**
@@ -50,23 +73,7 @@ public class ComboFenceUtils {
      * @param preference object being updated
      * @param comboParam object copied from
      */
-    public static void toPreferences(SharedPreferences preference, ComboParam comboParam){
-        SharedPreferences.Editor edit = preference.edit();
-        edit.putBoolean( isHEADPHONES, comboParam.hasHeadphones() );
-        edit.putBoolean( isLOCATION, comboParam.hasLocation() );
-
-        if( comboParam.hasHeadphones() ){
-
-        }
-
-        if( comboParam.hasLocation() ){
-            LocationParam locationParam = comboParam.getLocationParam();
-            edit.putLong( LAT, (long) locationParam.getLat());
-            edit.putLong( LON, (long) locationParam.getLon());
-            edit.putInt( METERS, locationParam.getMeters() );
-        }
-
-        edit.putBoolean(RUNNING, comboParam.getRunning() );
-        edit.apply();
+    public static void toPreferences(AwarenessPref_ preference, ComboParam comboParam){
+        preference.comboParamJson().put( new Gson().toJson( comboParam ));
     }
 }

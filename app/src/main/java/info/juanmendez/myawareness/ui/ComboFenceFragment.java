@@ -44,6 +44,7 @@ import info.juanmendez.myawareness.events.Response;
 import info.juanmendez.myawareness.events.ShortResponse;
 import info.juanmendez.myawareness.models.HeadphoneParam;
 import info.juanmendez.myawareness.models.LocationParam;
+import info.juanmendez.myawareness.utils.ComboFenceUtils;
 import timber.log.Timber;
 
 
@@ -126,13 +127,15 @@ public class ComboFenceFragment extends Fragment {
 
         @CheckedChange(R.id.comboFence_toggleButton)
         void onToggleButton( boolean isChecked ){
-            if( isChecked && mFenceRepo.areFencesValid() ){
+
+            String errorMessage = ComboFenceUtils.areThereErrors( mFenceRepo );
+            if( isChecked && errorMessage.isEmpty() ){
                 buildUpFences();
 
             }else{
                 mFenceRepo.setAwarenessFence(null);
                 mToggleButton.setChecked(false);
-                mSnackmePlease.e( mFenceRepo.getErrorMessage() );
+                mSnackmePlease.e( errorMessage );
             }
         }
     //</editor-fold>
@@ -174,7 +177,7 @@ public class ComboFenceFragment extends Fragment {
         ShortResponse<AwarenessFence> snapshotResponse = fence -> {
             fences.add( fence );
 
-            if( fences.size() == mFenceRepo.getFencesTotal() ){
+            if( fences.size() == ComboFenceUtils.getFencesTotal( mComboParam )){
                 AwarenessFence awarenessFence;
 
                 if( fences.size() == 1 )

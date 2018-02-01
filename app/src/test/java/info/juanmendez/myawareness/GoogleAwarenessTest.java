@@ -1,8 +1,13 @@
 package info.juanmendez.myawareness;
 
+import com.google.gson.Gson;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import info.juanmendez.myawareness.models.ComboParam;
+import info.juanmendez.myawareness.models.HeadphoneParam;
+import info.juanmendez.myawareness.models.LocationParam;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -18,12 +23,23 @@ public class GoogleAwarenessTest {
     @Test
     public void testJson() throws Exception {
         ComboParam comboParam = new ComboParam();
-       /* comboParam.setHeadphoneParam(true);
-        comboParam.setLocationParam(true);
-        comboParam.setLat(0);
-        comboParam.setLon(0);
-        comboParam.setMeters(10);
-        comboParam.setRunning(true);
-        comboParam.setXfer(false);*/
+        LocationParam locationParam = new LocationParam();
+        locationParam.setMeters( 10 );
+        locationParam.setLat( 2);
+        locationParam.setLon( 2 );
+        comboParam.setLocationParam( locationParam );
+
+        HeadphoneParam headphoneParam = new HeadphoneParam(true);
+        comboParam.setHeadphoneParam( headphoneParam );
+
+        String json = new Gson().toJson( comboParam );
+        Assert.assertFalse( json.isEmpty() );
+
+        comboParam = new Gson().fromJson( json, ComboParam.class );
+        Assert.assertEquals( comboParam.getLocationParam().getMeters(), 10 );
+
+
+        comboParam = new Gson().fromJson( "", ComboParam.class );
+        Assert.assertNull( comboParam );
     }
 }

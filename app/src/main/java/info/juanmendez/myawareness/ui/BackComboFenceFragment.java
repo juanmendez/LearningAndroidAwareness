@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.view.View;
@@ -32,11 +31,10 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -44,12 +42,13 @@ import info.juanmendez.myawareness.FragmentUtils;
 import info.juanmendez.myawareness.OutAndAboutReceiver;
 import info.juanmendez.myawareness.R;
 import info.juanmendez.myawareness.dependencies.AwarenessConnection;
+import info.juanmendez.myawareness.dependencies.AwarenessPref_;
 import info.juanmendez.myawareness.dependencies.FenceRepo;
-import info.juanmendez.myawareness.models.ComboParam;
 import info.juanmendez.myawareness.dependencies.LocationSnapshotService;
 import info.juanmendez.myawareness.dependencies.SnackMePlease;
 import info.juanmendez.myawareness.events.Response;
 import info.juanmendez.myawareness.events.ShortResponse;
+import info.juanmendez.myawareness.models.ComboParam;
 import info.juanmendez.myawareness.models.HeadphoneParam;
 import info.juanmendez.myawareness.models.LocationParam;
 import info.juanmendez.myawareness.utils.ComboFenceUtils;
@@ -64,7 +63,6 @@ import timber.log.Timber;
 @EFragment(R.layout.fragment_combo_fence)
 public class BackComboFenceFragment extends Fragment {
 
-    private static final DateFormat sDATEFORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     @ViewById(R.id.comboFence_checkHeadphones)
     CheckBox mCheckboxHeadphones;
 
@@ -82,6 +80,9 @@ public class BackComboFenceFragment extends Fragment {
 
     @SystemService
     NotificationManager mNotificationManager;
+
+    @Pref
+    AwarenessPref_ mAwarenessPref;
 
     @Bean
     AwarenessConnection mConnection;
@@ -135,12 +136,14 @@ public class BackComboFenceFragment extends Fragment {
 
         @CheckedChange(R.id.comboFence_toggleButton)
         void onToggleButton( boolean isChecked ){
-            if( isChecked && mFenceRepo.areFencesValid() ){
+
+            String errorMessage = ComboFenceUtils.areThereErrors( mFenceRepo );
+            if( isChecked && errorMessage.isEmpty() ){
                 buildUpFences();
             }else{
                 mToggleButton.setChecked(false);
                 turnOffFence();
-                mSnackmePlease.e( mFenceRepo.getErrorMessage() );
+                mSnackmePlease.e( errorMessage );
             }
         }
     //</editor-fold>
@@ -180,7 +183,7 @@ public class BackComboFenceFragment extends Fragment {
         ShortResponse<AwarenessFence> snapshotResponse = fence -> {
             fences.add( fence );
 
-            if( fences.size() == mFenceRepo.getFencesTotal() ){
+            if( fences.size() == ComboFenceUtils.getFencesTotal( mComboParam ) ){
                 AwarenessFence awarenessFence;
 
                 if( fences.size() == 1 )
@@ -275,7 +278,7 @@ public class BackComboFenceFragment extends Fragment {
     void showFenceQueries(){
 
         Awareness.FenceApi.queryFences(mConnection.getAwarenessClient(),
-                FenceQueryRequest.forFences(Arrays.asList(OutAndAboutReceiver.FENCE_KEY)))
+                FenceQueryRequest.forFences(Collections.singletonList(OutAndAboutReceiver.FENCE_KEY)))
                 .setResultCallback(fenceQueryResult -> {
 
                     if (!fenceQueryResult.getStatus().isSuccess()) {
@@ -291,7 +294,7 @@ public class BackComboFenceFragment extends Fragment {
                                 + ", was="
                                 + describeStatus(fenceState.getPreviousState())
                                 + ", lastUpdateTime="
-                                + sDATEFORMAT.format(new Date(fenceState.getLastFenceUpdateTimeMillis())));
+                                + new Date(fenceState.getLastFenceUpdateTimeMillis()));
                     }
                 });
 
@@ -313,12 +316,12 @@ public class BackComboFenceFragment extends Fragment {
 
     //<editor-fold desc="Preferences">
     private void saveChangesToPreferences(){
-        ComboFenceUtils.toPreferences( PreferenceManager.getDefaultSharedPreferences(getContext()), mComboParam);
+        ComboFenceUtils.toPreferences( mAwarenessPref, mComboParam);
     }
 
     private void syncFromPreferences() {
         if( !mComboParam.getXfer() ){
-            ComboFenceUtils.toComboFence(mComboParam, PreferenceManager.getDefaultSharedPreferences(getContext()));
+            ComboFenceUtils.toComboFence(mComboParam, mAwarenessPref);
         }
     }
     //</editor-fold>

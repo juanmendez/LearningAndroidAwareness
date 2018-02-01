@@ -15,7 +15,9 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EReceiver;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
+import info.juanmendez.myawareness.dependencies.AwarenessPref_;
 import info.juanmendez.myawareness.dependencies.FenceRepo;
 import info.juanmendez.myawareness.models.ComboParam;
 import info.juanmendez.myawareness.ui.MainActivity_;
@@ -39,6 +41,9 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
     @Bean
     FenceRepo mFenceRepo;
 
+    @Pref
+    AwarenessPref_ mAwarenessPref;
+
     ComboParam mComboParam;
 
     @AfterInject
@@ -60,9 +65,9 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
         FenceState fenceState = FenceState.extract(intent);
         if( !TextUtils.equals(fenceState.getFenceKey(), FENCE_KEY)) return;
 
-        ComboFenceUtils.toComboFence(mComboParam, PreferenceManager.getDefaultSharedPreferences(context));
+        ComboFenceUtils.toComboFence(mComboParam, mAwarenessPref);
 
-        ComboFenceUtils.toPreferences(PreferenceManager.getDefaultSharedPreferences(context), mComboParam);
+        ComboFenceUtils.toPreferences(mAwarenessPref, mComboParam);
 
         String message;
 

@@ -19,6 +19,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,9 @@ public class FenceService {
     @Bean
     AwarenessConnection mConnection;
 
+    @Pref
+    AwarenessPref_ mAwarenessPref;
+
 
     @AfterInject
     void afterInject(){
@@ -60,7 +64,7 @@ public class FenceService {
 
     public void rebootFences(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        ComboFenceUtils.toComboFence(mComboParam, preferences);
+        ComboFenceUtils.toComboFence(mComboParam, mAwarenessPref);
 
         if( mComboParam.getRunning() ){
             if( !mConnection.isConnected() )

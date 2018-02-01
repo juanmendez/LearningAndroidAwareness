@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
-import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 
 import com.google.android.gms.awareness.fence.FenceState;
@@ -88,7 +87,8 @@ public class OutAndAboutReceiver extends WakefulBroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, requestID, intent, flags);
 
 
-        Notification notification = new NotificationCompat.Builder(context)
+
+        Notification notification = new Notification.Builder(context)
                 .setContentText("Back Combo Fence")
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentText( content )
